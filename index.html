@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Airport System Home</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles/index.css">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Flight Search Form -->
+        <form id="flightSearchForm">
+            <input type="text" id="sourceCity" placeholder="Source City/Airport">
+            <input type="text" id="destinationCity" placeholder="Destination City/Airport">
+            <input type="date" id="date">
+            <button type="submit">Search Flights</button>
+        </form>
+
+        <!-- Flight Status Form -->
+        <form id="flightStatusForm">
+            <input type="text" id="flightNumber" placeholder="Flight Number">
+            <input type="date" id="statusDate">
+            <button type="submit">Check Status</button>
+        </form>
+
+        <h1>Welcome to the Airport System</h1>
+        <button onclick="location.href='login.html'" class="btn btn-primary">Login</button>
+        <button onclick="location.href='register_type.html'" class="btn btn-secondary">Register</button>
+    </div>
+</body>
+
+</html>
