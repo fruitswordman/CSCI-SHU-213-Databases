@@ -28,6 +28,13 @@ function showPanel(e, li) {
     }
 }
 
+
+// 
+// 
+// 
+// 
+// 
+// 
 const mockFlightsData = [
     {
         number: "AB123",
@@ -61,14 +68,18 @@ function fakeFetch(url) {
         }, 1000);
     });
 }
-
+// 
+// 
+// 
+// 
+// 
+// 
 
 function fetchAndDisplayFlights() {
     const flightsContainer = document.getElementById('flightsList');
     flightsContainer.innerHTML = '';
 
-    // Use fakeFetch here
-    fakeFetch('/api/flights/upcoming')
+    fetch('http://127.0.0.1:5000/api/flights/upcoming')  // Make sure the port matches the Flask server
         .then(response => response.json())
         .then(flights => {
             flights.forEach(flight => {
