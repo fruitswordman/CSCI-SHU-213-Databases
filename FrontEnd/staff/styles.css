@@ -102,17 +102,6 @@
     /* Do not grow or shrink */
 }
 
-/* Container for times and airports in the middle */
-.flight-times-airports-container {
-    display: flex;
-    flex-direction: column;
-    /* Stack times and airports vertically */
-    align-items: center;
-    /* Center times and airports horizontally */
-    flex: 1;
-    /* Allow this container to grow and take up available space */
-}
-
 /* Main container for times and airports */
 .flight-times-airports-container {
     display: flex;
@@ -120,7 +109,7 @@
     /* Stack times and airports horizontally */
     align-items: center;
     /* Center times and airports vertically */
-    flex: 0.7;
+    flex: 0.3;
     /* Allow this container to grow and take up available space */
 
 }
@@ -145,7 +134,7 @@
     /* Do not grow or shrink */
     padding: 0 10px;
     /* Adjust spacing as needed */
-    font-size: 3em;
+    font-size: 3rem;
     /* Adjust size as needed */
 }
 
