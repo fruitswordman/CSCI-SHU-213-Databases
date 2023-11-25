@@ -1,0 +1,216 @@
+.container {
+    display: flex;
+    height: 100vh;
+    /* Use full viewport height */
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #333;
+    color: #fff;
+    padding: 20px;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    padding: 10px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    background-color: #333;
+    color: white;
+}
+
+.sidebar ul li:hover,
+.sidebar ul li.active {
+    background-color: #555;
+}
+
+.main-content {
+    flex-grow: 1;
+    background-color: #fff;
+    padding: 20px;
+    overflow-y: auto;
+    /* Enable vertical scroll */
+}
+
+.content-panel {
+    display: none;
+    /* Hidden by default */
+}
+
+.content-panel h3 {
+    color: #333;
+}
+
+/* Additional styling for form elements and content */
+
+/* Active content panel styling */
+.content-panel.active {
+    display: block;
+}
+
+.flights-list
+
+/* Flights list styling */
+.flights-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+/* Styles for the overall flight container */
+.flight {
+    display: flex;
+    align-items: center;
+    /* Align items vertically in the center */
+    justify-content: space-between;
+    /* Space out the main elements */
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.flight:hover {
+    background-color: #f1f1f1;
+}
+
+/* Container for the price on the right */
+.flight-price-container {
+    display: flex;
+    align-items: center;
+    /* Align price vertically in the center */
+    justify-content: flex-end;
+    /* Align price to the right */
+    flex: 0 0 auto;
+    /* Do not grow or shrink */
+}
+
+/* Container for the airline and flight number on the left */
+.flight-info-container {
+    display: flex;
+    flex-direction: column;
+    /* Stack airline and flight number vertically */
+    align-items: flex-start;
+    /* Align to the left */
+    flex: 0 0 auto;
+    /* Do not grow or shrink */
+}
+
+/* Container for times and airports in the middle */
+.flight-times-airports-container {
+    display: flex;
+    flex-direction: column;
+    /* Stack times and airports vertically */
+    align-items: center;
+    /* Center times and airports horizontally */
+    flex: 1;
+    /* Allow this container to grow and take up available space */
+}
+
+/* Main container for times and airports */
+.flight-times-airports-container {
+    display: flex;
+    flex-direction: row;
+    /* Stack times and airports horizontally */
+    align-items: center;
+    /* Center times and airports vertically */
+    flex: 0.7;
+    /* Allow this container to grow and take up available space */
+
+}
+
+/* Container for departing information */
+.departing-container {
+    display: flex;
+    flex-direction: column;
+    /* Stack time and airport vertically */
+    align-items: center;
+    /* Align items to the center */
+    flex: 1;
+    /* Allow this container to grow and take up available space */
+}
+
+/* Container for the arrow icon */
+.flight-arrow-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    /* Do not grow or shrink */
+    padding: 0 10px;
+    /* Adjust spacing as needed */
+    font-size: 3em;
+    /* Adjust size as needed */
+}
+
+/* Container for arriving information */
+.arriving-container {
+    display: flex;
+    flex-direction: column;
+    /* Stack time and airport vertically */
+    align-items: center;
+    /* Align items to the center */
+    flex: 1;
+    /* Allow this container to grow and take up available space */
+}
+
+
+.flight-departing-time,
+.flight-arriving-time,
+.flight-number,
+.flight-airline,
+.flight-departing-airport,
+.flight-arriving-airport,
+.flight-date {
+    padding: 5px;
+    margin: 2px 0;
+}
+
+.flight-departing-time,
+.flight-arriving-time {
+    font-size: 2em;
+    font-weight: bold;
+}
+
+.flight-airline {
+    font-size: 1em;
+    font-weight: bold;
+    color: #333;
+}
+
+.flight-number {
+    font-size: 1.4em;
+    font-weight: bold;
+    color: #333333; 
+}
+
+.flight-departing-airport,
+.flight-arriving-airport {
+    font-size: 0.9em;
+    color: #666;
+}
+
+.flight-price {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: orange;
+}
+
+.flight-date {
+    font-size: 0.9em;
+    color: #666;
+    text-align: right;
+}
+
+/* Adjustments for mobile view */
+@media (max-width: 768px) {
+    .flight {
+        flex-direction: column;
+    }
+}

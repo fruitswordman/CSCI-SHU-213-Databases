@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="styles.css" rel="stylesheet">
+    <title>Airline Staff Dashboard</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <!-- Sidebar content (list of functionalities) -->
+            <ul>
+                <li data-panelid="viewFlightsPanel">View My Flights</li>
+                <li data-panelid="createFlightPanel">Create New Flight</li>
+                <li data-panelid="changeStatusPanel">Change Status of Flights</li>
+                <li data-panelid="addAirplanePanel">Add Airplane</li>
+                <li data-panelid="addAirportPanel">Add New Airport</li>
+                <li data-panelid="viewAgentsPanel">View Booking Agents</li>
+                <li data-panelid="viewCustomersPanel">View Frequent Customers</li>
+                <li data-panelid="viewReportsPanel">View Reports</li>
+                <li data-panelid="revenueComparisonPanel">Comparison of Revenue</li>
+                <li data-panelid="topDestinationsPanel">View Top Destinations</li>
+                <li data-panelid="grantPermissionsPanel">Grant Permissions</li>
+                <li data-panelid="addAgentsPanel">Add Booking Agents</li>
+                <li onclick="logout()">Logout</li>
+            </ul>
+        </div>
+        <div class="main-content">
+            <div id="viewFlightsPanel" class="content-panel">
+                <h3>Upcoming Flights</h3>
+                <!-- Dynamic content will be loaded here -->
+                <div id="flightsList" class="flights-list"></div>
+            </div>
+            <div id="createFlightPanel" class="content-panel">
+                <h3>Create a New Flight</h3>
+                <!-- Form to create a new flight -->
+            </div>
+            <div id="changeStatusPanel" class="content-panel">
+                <h3>Change Flight Status</h3>
+                <!-- Form to change flight status -->
+            </div>
+            <div id="addAirplanePanel" class="content-panel">
+                <h3>Add Airplane</h3>
+                <!-- Form to add a new airplane -->
+            </div>
+            <div id="addAirportPanel" class="content-panel">
+                <h3>Add New Airport</h3>
+                <!-- Form to add a new airport -->
+            </div>
+            <div id="viewAgentsPanel" class="content-panel">
+                <h3>Booking Agents</h3>
+                <!-- Information about booking agents -->
+            </div>
+            <div id="viewCustomersPanel" class="content-panel">
+                <h3>Frequent Customers</h3>
+                <!-- Information about frequent customers -->
+            </div>
+            <div id="viewReportsPanel" class="content-panel">
+                <h3>Reports</h3>
+                <!-- Sales reports and analytics -->
+            </div>
+            <div id="revenueComparisonPanel" class="content-panel">
+                <h3>Revenue Comparison</h3>
+                <!-- Revenue comparison charts -->
+            </div>
+            <div id="topDestinationsPanel" class="content-panel">
+                <h3>Top Destinations</h3>
+                <!-- List of top destinations -->
+            </div>
+            <div id="grantPermissionsPanel" class="content-panel">
+                <h3>Grant Permissions</h3>
+                <!-- Form to grant permissions to staff -->
+            </div>
+            <div id="addAgentsPanel" class="content-panel">
+                <h3>Add Booking Agents</h3>
+                <!-- Form to add booking agents -->
+            </div>
+            <!-- Logout functionality will be handled by JavaScript -->
+        </div>
+    </div>
+
+    <script src="scripts.js"></script>
+</body>
+
+</html>
