@@ -109,8 +109,6 @@ function queryAndDisplayFlights(departingCity, arrivingCity, date) {
 }
 
 
-
-
 document.addEventListener('DOMContentLoaded', function () {
     // Handle Flight Search Form Submission
     const flightSearchForm = document.getElementById('flightSearchForm');

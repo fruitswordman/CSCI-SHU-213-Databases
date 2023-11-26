@@ -124,6 +124,44 @@ def search_flights():
         connection.close()
 
 
+@app.route("/login", methods=["POST"])
+def login():
+    data = request.get_json()
+    username = data["username"]
+    password = data["password"]
+
+    # Connection to your database
+    connection = get_db_connection()
+
+    try:
+        with connection.cursor() as cursor:
+            print(username, password)
+            # Check airline_staff
+            query = "SELECT * FROM airline_staff WHERE username=%s and password=%s"
+            cursor.execute(query, (username, password))
+            if cursor.fetchone():
+                print("airline_staff")
+                return jsonify({"success": True, "type": "airline_staff"})
+
+            # Check booking_agent
+            query = "SELECT * FROM booking_agents WHERE email=%s and password=%s"
+            cursor.execute(query, (username, password))
+            if cursor.fetchone():
+                print("booking_agent")
+                return jsonify({"success": True, "type": "booking_agent"})
+
+            # Check customer
+            query = "SELECT * FROM customers WHERE email=%s and password=%s"
+            cursor.execute(query, (username, password))
+            if cursor.fetchone():
+                print("customer")
+                return jsonify({"success": True, "type": "customer"})
+
+            return jsonify({"success": False, "message": "Invalid credentials"})
+    finally:
+        connection.close()
+
+
 if __name__ == "__main__":
     app.run(debug=True)
     # print(get_upcoming_flights())

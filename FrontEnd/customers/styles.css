@@ -1,26 +1,72 @@
-body {
-    background-color: #f4f4f4;
-    font-family: Arial, sans-serif;
+.dashboard-header {
+    position: absolute; /* Position it relative to the browser window */
+    top: 10px; /* Adjust as needed for top spacing */
+    right: 10px; /* Adjust as needed for right spacing */
+    background-color: #333; /* Sidebar color */
+    color: white;
+    padding: 10px 20px; /* Horizontal and vertical padding */
+    border-radius: 15px; /* Rounded corners */
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5); /* Optional: Adds a shadow for depth */
+}
+
+.user-name {
+    font-size: 1.2em; /* Adjust as needed */
 }
 
 .container {
-    width: 80%;
-    margin: auto;
-    overflow: hidden;
-    padding: 50px 0;
-    text-align: center;
+    display: flex;
+    height: 100vh;
+    /* Use full viewport height */
 }
 
-h1 {
+.sidebar {
+    width: 250px;
+    background-color: #333;
+    color: #fff;
+    padding: 20px;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    padding: 10px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    background-color: #333;
+    color: white;
+}
+
+.sidebar ul li:hover,
+.sidebar ul li.active {
+    background-color: #555;
+}
+
+.main-content {
+    flex-grow: 1;
+    background-color: #fff;
+    padding: 20px;
+    overflow-y: auto;
+    /* Enable vertical scroll */
+}
+
+.content-panel {
+    display: none;
+    /* Hidden by default */
+}
+
+.content-panel h3 {
     color: #333;
-    margin-bottom: 30px;
 }
 
-.btn {
-    width: 150px;
-    margin: 10px;
-}
+/* Additional styling for form elements and content */
 
+/* Active content panel styling */
+.content-panel.active {
+    display: block;
+}
 
 .flights-list
 
