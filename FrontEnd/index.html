@@ -13,8 +13,8 @@
     <div class="container">
         <!-- Flight Search Form -->
         <form id="flightSearchForm">
-            <input type="text" id="sourceCity" placeholder="Source City/Airport">
-            <input type="text" id="destinationCity" placeholder="Destination City/Airport">
+            <input type="text" id="departingAirport" placeholder="Departure City/Airport">
+            <input type="text" id="arrivingAirport" placeholder="Arrival City/Airport">
             <input type="date" id="date">
             <button type="submit">Search Flights</button>
         </form>
@@ -26,10 +26,15 @@
             <button type="submit">Check Status</button>
         </form>
 
+        <!-- Container for displaying flight results -->
+        <div id="flightsList"></div>
+
         <h1>Welcome to the Airport System</h1>
         <button onclick="location.href='login.html'" class="btn btn-primary">Login</button>
         <button onclick="location.href='register_type.html'" class="btn btn-secondary">Register</button>
     </div>
+
+    <script src="scripts/index.js"></script>
 </body>
 
 </html>

@@ -34,7 +34,7 @@
 # # if __name__ == "__main__":
 # #     app.run(debug=True)
 
-from flask import Flask, jsonify
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 import pymysql.cursors
 from datetime import timedelta, date, time
@@ -53,28 +53,29 @@ class CustomJSONEncoder(json.JSONEncoder):
         elif isinstance(obj, decimal.Decimal):
             return str(obj)
         return super(CustomJSONEncoder, self).default(obj)
-    
+
 
 app = Flask(__name__)
 app.json_encoder = CustomJSONEncoder
 CORS(app)
 
 
-
 # Database connection settings
 DB_SETTINGS = {
-    'host': 'localhost',
-    'user': 'root',
-    'password': '123456',
-    'db': 'databases_project',
-    'cursorclass': pymysql.cursors.DictCursor
+    "host": "localhost",
+    "user": "root",
+    "password": "123456",
+    "db": "databases_project",
+    "cursorclass": pymysql.cursors.DictCursor,
 }
+
 
 # Function to connect to the database
 def get_db_connection():
     return pymysql.connect(**DB_SETTINGS)
 
-@app.route('/api/flights/upcoming', methods=['GET'])
+
+@app.route("/api/flights/upcoming", methods=["GET"])
 def get_upcoming_flights():
     connection = get_db_connection()
     try:
@@ -93,6 +94,36 @@ def get_upcoming_flights():
         # Close the connection
         connection.close()
 
-if __name__ == '__main__':
+
+@app.route("/api/flights/search", methods=["GET"])
+def search_flights():
+    # Retrieve query parameters
+    departing_city = request.args.get("departingCity", type=str)
+    arriving_city = request.args.get("arrivingCity", type=str)
+    date = request.args.get("date", type=str)  # Assuming date is in 'YYYY-MM-DD' format
+
+    connection = get_db_connection()
+    try:
+        with connection.cursor() as cursor:
+            # Construct SQL query with parameters
+            # Make sure to use parameterized queries to prevent SQL injection
+            sql = """
+                SELECT * FROM flights
+                WHERE departureairport = %s AND arrivalairport = %s AND DATE(departingdatetime) = %s
+                ORDER BY departingdatetime DESC;
+            """
+            cursor.execute(sql, (departing_city, arriving_city, date))
+
+            # Fetch all results
+            flights = cursor.fetchall()
+
+            # Return the results as JSON
+            return jsonify(flights)
+    finally:
+        # Close the connection
+        connection.close()
+
+
+if __name__ == "__main__":
     app.run(debug=True)
     # print(get_upcoming_flights())
