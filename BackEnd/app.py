@@ -1,78 +1,12 @@
-# # from flask import Flask, jsonify, request
-# # from flask_cors import CORS
-
-# # app = Flask(__name__)
-# # CORS(app)
-
-# # # Mock data to simulate database records.
-# # mock_flights_data = [
-# #     {
-# #         "number": "AB123",
-# #         "departureTime": "2023-07-21T10:00:00Z",
-# #         "arrivalTime": "2023-07-21T12:00:00Z",
-# #         "origin": "New York",
-# #         "destination": "London",
-# #     },
-# #     {
-# #         "number": "CD456",
-# #         "departureTime": "2023-07-22T11:00:00Z",
-# #         "arrivalTime": "2023-07-22T15:00:00Z",
-# #         "origin": "Berlin",
-# #         "destination": "Paris",
-# #     },
-# # ]
-
-
-# # @app.route("/api/flights/upcoming", methods=["GET"])
-# # def get_upcoming_flights():
-# #     # In a real app, you would retrieve this data from your database.
-# #     return jsonify(mock_flights_data)
-
-
-# # # Add more routes as needed for your application
-
-# # if __name__ == "__main__":
-# #     app.run(debug=True)
-
-from flask import Flask, request, jsonify
+from flask import Flask, jsonify, request, session
 from flask_cors import CORS
-import pymysql.cursors
-from datetime import timedelta, date, time
-import decimal
-import json
 
-
-class CustomJSONEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, timedelta):
-            return str(obj)  # or however you wish to serialize it
-        elif isinstance(obj, date):
-            return obj.isoformat()
-        elif isinstance(obj, time):
-            return obj.isoformat()
-        elif isinstance(obj, decimal.Decimal):
-            return str(obj)
-        return super(CustomJSONEncoder, self).default(obj)
-
+from utils import *
 
 app = Flask(__name__)
+app.secret_key = 'your_very_secret_key_here'
 app.json_encoder = CustomJSONEncoder
 CORS(app)
-
-
-# Database connection settings
-DB_SETTINGS = {
-    "host": "localhost",
-    "user": "root",
-    "password": "123456",
-    "db": "databases_project",
-    "cursorclass": pymysql.cursors.DictCursor,
-}
-
-
-# Function to connect to the database
-def get_db_connection():
-    return pymysql.connect(**DB_SETTINGS)
 
 
 @app.route("/api/flights/upcoming", methods=["GET"])
@@ -141,6 +75,8 @@ def login():
             cursor.execute(query, (username, password))
             if cursor.fetchone():
                 print("airline_staff")
+                session['username'] = username
+                session['type'] = 'airline_staff'
                 return jsonify({"success": True, "type": "airline_staff"})
 
             # Check booking_agent
@@ -148,6 +84,8 @@ def login():
             cursor.execute(query, (username, password))
             if cursor.fetchone():
                 print("booking_agent")
+                session['username'] = username
+                session['type'] = 'booking_agent'
                 return jsonify({"success": True, "type": "booking_agent"})
 
             # Check customer
@@ -155,6 +93,8 @@ def login():
             cursor.execute(query, (username, password))
             if cursor.fetchone():
                 print("customer")
+                session['username'] = username
+                session['type'] = 'customer'
                 return jsonify({"success": True, "type": "customer"})
 
             return jsonify({"success": False, "message": "Invalid credentials"})
