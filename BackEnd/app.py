@@ -117,7 +117,6 @@ def login():
     finally:
         connection.close()
 
-
 @app.route("/api/create_flights", methods=["GET"])
 def create_flight():
     # Retrieve query parameters
@@ -140,14 +139,14 @@ def create_flight():
 
     # Data type conversions
     value_dict["Price"] = decimal.Decimal(value_dict["Price"])
-    value_dict["Date"] = dt.strptime(value_dict["Date"], "%Y-%m-%d").date()
-    value_dict["DepartingDateTime"] = dt.strptime(
+    value_dict["Date"] = datetime.strptime(value_dict["Date"], "%Y-%m-%d").date()
+    value_dict["DepartingDateTime"] = datetime.strptime(
         value_dict["DepartingDateTime"], "%Y-%m-%d %H:%M:%S"
     )
 
     # Assuming DepartingTime and ArrivingTime are in 'HH:MM:SS' format
-    departing_time_obj = dt.strptime(value_dict["DepartingTime"], "%H:%M:%S")
-    arriving_time_obj = dt.strptime(value_dict["ArrivingTime"], "%H:%M:%S")
+    departing_time_obj = datetime.strptime(value_dict["DepartingTime"], "%H:%M:%S")
+    arriving_time_obj = datetime.strptime(value_dict["ArrivingTime"], "%H:%M:%S")
     value_dict["DepartingTime"] = departing_time_obj.time()
     value_dict["ArrivingTime"] = arriving_time_obj.time()
 
