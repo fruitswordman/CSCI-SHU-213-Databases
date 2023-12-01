@@ -9,16 +9,13 @@
 </head>
 
 <body>
-    <header class="dashboard-header">
-        <span class="user-name">Welcome, <span id="userName">User</span></span>
-    </header>
     <div class="container">
         <div class="sidebar">
             <ul>
                 <li data-panelid="viewFlightsPanel">View My Flights</li>
                 <li data-panelid="searchFlightsPanel">Search For Flights</li>
                 <li data-panelid="trackSpendingPanel">Track My Spending</li>
-                <li onclick="logout()">Logout</li>
+                <li onclick="window.location.href = '../login.html'">Logout</li>
             </ul>
         </div>
 
