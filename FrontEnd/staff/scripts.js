@@ -141,34 +141,32 @@ document.querySelector('[data-panelid="viewFlightsPanel"]').addEventListener('cl
 });
 
 
-const flightSearchForm = document.getElementById('createFlightForm');
-flightSearchForm.addEventListener('submit', function (event) {
+const createFlightForm = document.getElementById('createFlightForm');
+createFlightForm.addEventListener('submit', function (event) {
     event.preventDefault();
-    // const FlightNumber = document.getElementById("FlightNumber").value
-    // const DepartingTime = document.getElementById("DepartingTime").value
-    // const ArrivingTime = document.getElementById("ArrivingTime").value
-    // const Price = document.getElementById("Price").value
-    // const Status = document.getElementById("Status").value
-    // const DepartureAirport = document.getElementById("DepartureAirport").value
-    // const ArrivalAirport = document.getElementById("ArrivalAirport").value
-    // const Airline = document.getElementById("Airline").value
-    // const Airplane = document.getElementById("Airplane").value
-    // const Date = document.getElementById("Date").value
+    const FlightNumber = document.getElementById("FlightNumber").value
+    const DepartingTime = document.getElementById("DepartingTime").value
+    const ArrivingTime = document.getElementById("ArrivingTime").value
+    const Price = document.getElementById("Price").value
+    const Status = document.getElementById("Status").value
+    const DepartureAirport = document.getElementById("DepartureAirport").value
+    const ArrivalAirport = document.getElementById("ArrivalAirport").value
+    const Airline = document.getElementById("Airline").value
+    const Airplane = document.getElementById("Airplane").value
+    const Date = document.getElementById("Date").value
     // const DepartingDateTime = document.getElementById("DepartingDateTime").value
 
-    const FlightNumber = '3U2395';
-    const DepartingTime = '21:30:00';
-    const ArrivingTime = '23:50:00';
-    const Price = '1080';
-    const Status = 'Scheduled'; // Assuming the flight is scheduled
-    const DepartureAirport = '萧山国际机场T3'; // Hangzhou Xiaoshan International Airport Terminal 3
-    const ArrivalAirport = '江北国际机场T3'; // Chongqing Jiangbei International Airport Terminal 3
-    const Airline = '四川航空'; // Sichuan Airlines
-    const Airplane = '1'; // Airplane model is not provided
-    const Date = '2024-08-09';
-    const DepartingDateTime = '2024-08-09 21:30:00';
-
-    // Implement your search logic here
+    // const FlightNumber = '3U2395';
+    // const DepartingTime = '21:30:00';
+    // const ArrivingTime = '23:50:00';
+    // const Price = '1080';
+    // const Status = 'Scheduled'; // Assuming the flight is scheduled
+    // const DepartureAirport = '萧山国际机场T3'; // Hangzhou Xiaoshan International Airport Terminal 3
+    // const ArrivalAirport = '江北国际机场T3'; // Chongqing Jiangbei International Airport Terminal 3
+    // const Airline = '四川航空'; // Sichuan Airlines
+    // const Airplane = '1'; // Airplane model is not provided
+    // const Date = '2024-08-09';
+    // const DepartingDateTime = '2024-08-09 21:30:00';
 
     queryAndDisplayFlights(FlightNumber,
         DepartingTime,
@@ -179,14 +177,11 @@ flightSearchForm.addEventListener('submit', function (event) {
         ArrivalAirport,
         Airline,
         Airplane,
-        Date,
-        DepartingDateTime);
+        Date);
 
     // console.log(`Searching flights from ${departingAirport} to ${arrivingAirport} on ${date}`);
 
 });
-
-
 
 
 function queryAndDisplayFlights(FlightNumber,
@@ -198,8 +193,7 @@ function queryAndDisplayFlights(FlightNumber,
     ArrivalAirport,
     Airline,
     Airplane,
-    Date,
-    DepartingDateTime) {
+    Date) {
     const flightsContainer = document.getElementById('createFlightResult');
     flightsContainer.innerHTML = '';
 
@@ -215,8 +209,7 @@ function queryAndDisplayFlights(FlightNumber,
         ArrivalAirport,
         Airline,
         Airplane,
-        Date,
-        DepartingDateTime
+        Date
     };
     url.search = new URLSearchParams(params).toString();
     // console.log(url)
@@ -401,27 +394,27 @@ function CreateDisplayAirport(AirportName,
 const CreateAirplaneForm = document.getElementById('createAirplaneForm');
 CreateAirplaneForm.addEventListener('submit', function (event) {
     event.preventDefault();
-    const  AirplaneID = document.getElementById("AirplaneID").value
-    const  SeatingCapacity = document.getElementById("SeatingCapacity").value
+    const AirplaneID = document.getElementById("AirplaneID").value
+    const SeatingCapacity = document.getElementById("SeatingCapacity").value
     const Airline = document.getElementById("cAirline").value
     // Implement your search logic here
 
     CreateDisplayAirplane(
-        AirplaneID,SeatingCapacity,Airline
+        AirplaneID, SeatingCapacity, Airline
     );
 
     // console.log(`Searching flights from ${departingAirport} to ${arrivingAirport} on ${date}`);
 
 });
 
-function CreateDisplayAirplane(AirplaneID,SeatingCapacity,Airline) {
+function CreateDisplayAirplane(AirplaneID, SeatingCapacity, Airline) {
     const AirplaneContainer = document.getElementById('addAirplaneResult');
     AirplaneContainer.innerHTML = '';
 
     // Construct the URL with query parameters
     const url = new URL('http://127.0.0.1:5000/api/create_airplane');
     const params = {
-        AirplaneID,SeatingCapacity,Airline
+        AirplaneID, SeatingCapacity, Airline
     };
     url.search = new URLSearchParams(params).toString();
     // console.log(url)
@@ -444,7 +437,7 @@ function CreateDisplayAirplane(AirplaneID,SeatingCapacity,Airline) {
                 // Flight Number
                 const SeatingCapacity = document.createElement('div');
                 SeatingCapacity.className = 'AirportCity';
-                SeatingCapacity.textContent = `${airport.SeatingCapacity }`;
+                SeatingCapacity.textContent = `${airport.SeatingCapacity}`;
                 AirplaneDiv.appendChild(SeatingCapacity);
 
                 // Date
@@ -472,7 +465,7 @@ function CreateDisplayAirplane(AirplaneID,SeatingCapacity,Airline) {
 const updateStatusForm = document.getElementById('UpdateStatusForm');
 updateStatusForm.addEventListener('submit', function (event) {
     event.preventDefault();
-    const FlightNumber= document.getElementById("FlightNumber1").value
+    const FlightNumber = document.getElementById("FlightNumber1").value
     const DepartingDateTime = document.getElementById("DepartingDateTime1").value
     const Status = document.getElementById("Status1").value
     // Implement your search logic here
@@ -499,7 +492,8 @@ function updateAndDisplayFlights(
     const params = {
         Status,
         FlightNumber,
-        DepartingDateTime};
+        DepartingDateTime
+    };
     console.log(params)
     url.search = new URLSearchParams(params).toString();
     // console.log(url)

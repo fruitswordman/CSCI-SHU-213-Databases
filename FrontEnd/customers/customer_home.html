@@ -24,10 +24,30 @@
                 <h3>View Flights</h3>
                 <div id="flightsList" class="flights-list"></div>
             </div>
+
             <div id="searchFlightsPanel" class="content-panel">
-                <h3>Search For Flights</h3>
-                <!-- Form to create a new flight -->
+                <h3>Search & Bug</h3>
+                <!-- Form to search for a flight -->
+                <form id="searchFlightsForm">
+                    <input type="text" id="searchFlightNumber" placeholder="Flight Number">
+                    <!-- <label for="searchDepartingTime">Departing Time (HH:MM:SS)</label>
+                    <input type="time" id="searchDepartingTime">
+                    <label for="searchArrivingTime">Arriving Time (HH:MM:SS)</label>
+                    <input type="time" id="searchArrivingTime"> -->
+                    <input type="text" id="searchPrice" placeholder="Price">
+                    <input type="text" id="searchStatus" placeholder="Status">
+                    <input type="text" id="searchDepartureAirport" placeholder="Departure Airport">
+                    <input type="text" id="searchArrivalAirport" placeholder="Arrival Airport">
+                    <input type="text" id="searchAirline" placeholder="Airline">
+                    <input type="text" id="searchAirplane" placeholder="Airplane">
+                    <input type="date" id="searchDate">
+                    <button type="submit">Search Flight</button>
+                </form>
+                <div id="searchFlightsResult">
+                    <!-- Search results will be displayed here -->
+                </div>
             </div>
+
             <div id="trackSpendingPanel" class="content-panel">
                 <h3>Keep Track of Spendings</h3>
                 <!-- Form to change flight status -->

@@ -1,16 +1,24 @@
 .dashboard-header {
-    position: absolute; /* Position it relative to the browser window */
-    top: 10px; /* Adjust as needed for top spacing */
-    right: 10px; /* Adjust as needed for right spacing */
-    background-color: #333; /* Sidebar color */
+    position: absolute;
+    /* Position it relative to the browser window */
+    top: 10px;
+    /* Adjust as needed for top spacing */
+    right: 10px;
+    /* Adjust as needed for right spacing */
+    background-color: #333;
+    /* Sidebar color */
     color: white;
-    padding: 10px 20px; /* Horizontal and vertical padding */
-    border-radius: 15px; /* Rounded corners */
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5); /* Optional: Adds a shadow for depth */
+    padding: 10px 20px;
+    /* Horizontal and vertical padding */
+    border-radius: 15px;
+    /* Rounded corners */
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    /* Optional: Adds a shadow for depth */
 }
 
 .user-name {
-    font-size: 1.2em; /* Adjust as needed */
+    font-size: 1.2em;
+    /* Adjust as needed */
 }
 
 .container {
@@ -98,6 +106,7 @@
 /* Container for the price on the right */
 .flight-price-container {
     display: flex;
+    flex-direction: column;
     align-items: center;
     /* Align price vertically in the center */
     justify-content: flex-end;
@@ -191,7 +200,7 @@
 .flight-number {
     font-size: 1.4em;
     font-weight: bold;
-    color: #333333; 
+    color: #333333;
 }
 
 .flight-departing-airport,
@@ -212,9 +221,67 @@
     text-align: right;
 }
 
+.flight-status {
+    margin-top: 10px;
+    font-size: 1.2em;
+    color: #333;
+    text-align: right;
+}
+
 /* Adjustments for mobile view */
 @media (max-width: 768px) {
     .flight {
         flex-direction: column;
+    }
+}
+
+
+/*  */
+/*  */
+/* create new flight */
+/*  */
+/*  */
+
+#searchFlightsForm {
+    display: flex;
+    flex-direction: column;
+    max-width: 500px;
+    /* Adjust as necessary */
+    margin: auto;
+    padding: 20px;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#searchFlightsForm input[type="text"],
+#searchFlightsForm input[type="date"] {
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1em;
+}
+
+#searchFlightsForm button {
+    padding: 10px;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
+}
+
+/* Adding responsiveness to the form */
+@media (max-width: 768px) {
+    #searchFlightsForm {
+        width: 90%;
+    }
+
+    #searchFlightsForm input[type="text"],
+    #searchFlightsForm input[type="date"] {
+        font-size: 0.9em;
     }
 }

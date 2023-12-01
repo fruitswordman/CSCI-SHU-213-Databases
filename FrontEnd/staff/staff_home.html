@@ -46,6 +46,7 @@
                 <li onclick="window.location.href = '../login.html'">Logout</li>
             </ul>
         </div>
+
         <div class="main-content">
             <div id="viewFlightsPanel" class="content-panel">
                 <h3>View Flights</h3>
@@ -66,7 +67,7 @@
                     <input type="text" id="Airline" placeholder="Airline">
                     <input type="text" id="Airplane" placeholder="Airplane">
                     <input type="date" id="Date">
-                    <input type="text" id="DepartingDateTime" placeholder="DepartingDateTime">
+                    <!-- <input type="text" id="DepartingDateTime" placeholder="DepartingDateTime"> -->
                     <button type="submit">Create Flight</button>
                 </form>
                 <div id="createFlightResult">
@@ -80,14 +81,22 @@
                 <form id="UpdateStatusForm">
                     <input type="text" id="FlightNumber1" placeholder="Flight Number">
                     <input type="text" id="DepartingDateTime1" placeholder="DepartingDateTime">
-                    <input type="text" id="Status1" placeholder="Status">
-                    <button type="submit">Update Status </button>
+
+                    <!-- Dropdown for status -->
+                    <select id="Status1">
+                        <option value="" selected disabled>Choose a status...</option>
+                        <option value="Upcoming">Upcoming</option>
+                        <option value="Delayed">Delayed</option>
+                        <option value="In-Progress">In-Progress</option>
+                        <option value="Completed">Completed</option>
+                    </select>
+
+                    <button type="submit">Update Status</button>
                 </form>
                 <div id="updateStatusResult">
                 </div>
-
-
             </div>
+
             <div id="addAirplanePanel" class="content-panel">
                 <h3>Add Airplane</h3>
                 <!-- Form to add a new airplane -->
@@ -110,43 +119,47 @@
                 <form id="createAirportForm">
                     <input type="text" id="AirportName" placeholder="Name for the airport">
                     <input type="text" id="AirportCity" placeholder="The city of the airport">
-                    <input type="text" id="IATA" placeholder="The universal code for airport">
+                    <input type="text" id="IATA" placeholder="IATA code for airport">
                     <button type="submit">Add Airport</button>
                 </form>
                 <div id="addAirportResult">
                 </div>
 
-            </div>
-            <div id="viewAgentsPanel" class="content-panel">
-                <h3>Booking Agents</h3>
-                <!-- Information about booking agents -->
-            </div>
-            <div id="viewCustomersPanel" class="content-panel">
-                <h3>Frequent Customers</h3>
-                <!-- Information about frequent customers -->
-            </div>
-            <div id="viewReportsPanel" class="content-panel">
-                <h3>Reports</h3>
-                <!-- Sales reports and analytics -->
-            </div>
-            <div id="revenueComparisonPanel" class="content-panel">
-                <h3>Revenue Comparison</h3>
-                <!-- Revenue comparison charts -->
-            </div>
-            <div id="topDestinationsPanel" class="content-panel">
-                <h3>Top Destinations</h3>
-                <!-- List of top destinations -->
-            </div>
-            <div id="grantPermissionsPanel" class="content-panel">
-                <h3>Grant Permissions</h3>
-                <!-- Form to grant permissions to staff -->
-            </div>
-            <div id="addAgentsPanel" class="content-panel">
-                <h3>Add Booking Agents</h3>
-                <!-- Form to add booking agents -->
+
             </div>
 
+
         </div>
+        <div id="viewAgentsPanel" class="content-panel">
+            <h3>Booking Agents</h3>
+            <!-- Information about booking agents -->
+        </div>
+        <div id="viewCustomersPanel" class="content-panel">
+            <h3>Frequent Customers</h3>
+            <!-- Information about frequent customers -->
+        </div>
+        <div id="viewReportsPanel" class="content-panel">
+            <h3>Reports</h3>
+            <!-- Sales reports and analytics -->
+        </div>
+        <div id="revenueComparisonPanel" class="content-panel">
+            <h3>Revenue Comparison</h3>
+            <!-- Revenue comparison charts -->
+        </div>
+        <div id="topDestinationsPanel" class="content-panel">
+            <h3>Top Destinations</h3>
+            <!-- List of top destinations -->
+        </div>
+        <div id="grantPermissionsPanel" class="content-panel">
+            <h3>Grant Permissions</h3>
+            <!-- Form to grant permissions to staff -->
+        </div>
+        <div id="addAgentsPanel" class="content-panel">
+            <h3>Add Booking Agents</h3>
+            <!-- Form to add booking agents -->
+        </div>
+
+    </div>
     </div>
 
     <script src="scripts.js"></script>
