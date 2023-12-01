@@ -28,54 +28,6 @@ function showPanel(e, li) {
     }
 }
 
-
-// 
-// 
-// 
-// 
-// 
-// 
-const mockFlightsData = [
-    {
-        number: "AB123",
-        departureTime: "2023-07-21T10:00:00Z",
-        arrivalTime: "2023-07-21T12:00:00Z",
-        origin: "New York",
-        destination: "London",
-        // ... other flight details
-    },
-    {
-        number: "CD456",
-        departureTime: "2023-07-22T11:00:00Z",
-        arrivalTime: "2023-07-22T15:00:00Z",
-        origin: "Berlin",
-        destination: "Paris",
-        // ... other flight details
-    },
-    // ... more flights
-];
-
-
-function fakeFetch(url) {
-    return new Promise((resolve, reject) => {
-        // Simulate a network request with a delay
-        setTimeout(() => {
-            if (url === "/api/flights/upcoming") {
-                resolve({ json: () => Promise.resolve(mockFlightsData) });
-            } else {
-                reject(new Error('Not found'));
-            }
-        }, 1000);
-    });
-}
-// 
-// 
-// 
-// 
-// 
-// 
-
-
 function fetchAndDisplayFlights() {
     const flightsContainer = document.getElementById('flightsList');
     flightsContainer.innerHTML = '';
@@ -175,10 +127,10 @@ function fetchAndDisplayFlights() {
                 flightsContainer.appendChild(flightDiv);
             });
         })
-    // .catch(error => {
-    //     console.error('Error fetching flights:', error);
-    //     flightsContainer.textContent = 'Failed to load flights.';
-    // });
+        .catch(error => {
+            console.error('Error fetching flights:', error);
+            flightsContainer.textContent = 'Failed to load flights.';
+        });
 }
 
 

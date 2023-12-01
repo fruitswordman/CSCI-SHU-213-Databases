@@ -87,12 +87,18 @@ def login():
         with connection.cursor() as cursor:
             print(username, password)
             # Check airline_staff
-            query = "SELECT * FROM airline_staff WHERE username=%s and password=%s"
-            cursor.execute(query, (username, password))
+            staff_query = "SELECT * FROM airline_staff WHERE username=%s and password=%s"
+            cursor.execute(staff_query, (username, password))
             if cursor.fetchone():
                 print("airline_staff")
                 session["username"] = username
                 session["type"] = "airline_staff"
+                permission_query = "SELECT permissiontype FROM permissions WHERE username =%s;"
+                cursor.execute(permission_query, (username))
+                permission = cursor.fetchone()
+                permission = permission["permissiontype"]
+                print(permission)
+                session["permission"] = permission
                 return jsonify({"success": True, "type": "airline_staff"})
 
             # Check booking_agent
