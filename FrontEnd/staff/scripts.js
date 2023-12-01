@@ -83,7 +83,7 @@ function fetchAndDisplayFlights() {
     fetch('http://127.0.0.1:5000/api/flights/upcoming')  // Make sure the port matches the Flask server
         .then(response => response.json())
         .then(flights => {
-            console.log(flights);
+            // console.log(flights);
             flights.forEach(flight => {
                 const flightDiv = document.createElement('div');
                 flightDiv.className = 'flight';
@@ -396,7 +396,7 @@ function CreateDisplayAirport(AirportName,
     AirportContainer.innerHTML = '';
 
     // Construct the URL with query parameters
-    const url = new URL('http://127.0.0.1:5000/api/create_airport');
+    const url = new URL('http://127.0.0.1:5000/api/create_airplane');
     const params = {
         AirportName,
         AirportCity,
@@ -440,7 +440,76 @@ function CreateDisplayAirport(AirportName,
             });
         })
         .catch(error => {
-            console.error('Error fetching flights:', error);
-            flightsContainer.textContent = 'Failed to load flights.';
+            console.error('Error fetching airports:', error);
+            flightsContainer.textContent = 'Failed to load airports.';
+        });
+}
+
+
+const CreateAirplaneForm = document.getElementById('createAirplaneForm');
+CreateAirplaneForm.addEventListener('submit', function (event) {
+    event.preventDefault();
+    const  AirplaneID = document.getElementById("AirplaneID").value
+    const  SeatingCapacity = document.getElementById("SeatingCapacity").value
+    const Airline = document.getElementById("cAirline").value
+    // Implement your search logic here
+
+    CreateDisplayAirplane(
+        AirplaneID,SeatingCapacity,Airline
+    );
+
+    // console.log(`Searching flights from ${departingAirport} to ${arrivingAirport} on ${date}`);
+
+});
+
+function CreateDisplayAirplane(AirplaneID,SeatingCapacity,Airline) {
+    const AirplaneContainer = document.getElementById('addAirplaneResult');
+    AirplaneContainer.innerHTML = '';
+
+    // Construct the URL with query parameters
+    const url = new URL('http://127.0.0.1:5000/api/create_airplane');
+    const params = {
+        AirplaneID,SeatingCapacity,Airline
+    };
+    url.search = new URLSearchParams(params).toString();
+    // console.log(url)
+    console.log(params)
+    fetch(url)  // Make sure the port matches the Flask server
+        .then(response => response.json())
+        .then(Airplanes => {
+            //console.log(Airports);
+            Airplanes.forEach(airport => {
+                const AirplaneDiv = document.createElement('div');
+                AirplaneDiv.className = 'Airplane';
+
+
+                // Airline
+                const AirplaneID = document.createElement('div');
+                AirplaneID.className = 'AirplaneID';
+                AirplaneID.textContent = `${airport.AirplaneID}`;
+                AirplaneDiv.appendChild(AirplaneID);
+
+                // Flight Number
+                const SeatingCapacity = document.createElement('div');
+                SeatingCapacity.className = 'AirportCity';
+                SeatingCapacity.textContent = `${airport.SeatingCapacity }`;
+                AirplaneDiv.appendChild(SeatingCapacity);
+
+                // Date
+                const cAirline = document.createElement('div');
+                cAirline.className = 'Airline';
+                cAirline.textContent = `${airport.Airline}`;
+                AirplaneDiv.appendChild(cAirline);
+
+                // Append containers to the main flight div
+                // AirportDiv.appendChild(infoContainer);
+
+                // Append the complete flight info to the container
+                AirplaneContainer.appendChild(AirplaneDiv);
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching Airplanes:', error);
+            flightsContainer.textContent = 'Failed to load Airplanes.';
         });
 }
