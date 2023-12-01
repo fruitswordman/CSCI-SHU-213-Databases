@@ -109,6 +109,68 @@ function queryAndDisplayFlights(departingCity, arrivingCity, date) {
 }
 
 
+function checkAndDisplayStatus(flightNumber, statusDate) {
+    const statusContainer = document.getElementById('statusList');
+    statusContainer.innerHTML = '';
+
+    // Construct the URL with query parameters
+    const url = new URL('http://127.0.0.1:5000/api/flights/status');
+    const params = { flightNumber, statusDate };
+    url.search = new URLSearchParams(params).toString();
+
+    fetch(url)  // Make sure the port matches the server where your API is hosted
+        .then(response => response.json())
+        .then(status => {
+            status.forEach(status => {
+                const statusDiv = document.createElement('div');
+                statusDiv.className = 'status';
+
+                console.log(status.FlightNumber);
+                console.log(status.Date);
+                console.log(status.Status);
+
+
+                // Flight Number container
+                const flightNumberContainer = document.createElement('div');
+                flightNumberContainer.className = 'status-flight-number-container';
+
+                // Flight Number
+                const flightNumberDisplay = document.createElement('div');
+                flightNumberDisplay.className = 'status-flight-number';
+                flightNumberDisplay.textContent = `Flight Number: ${status.FlightNumber}`;
+                flightNumberContainer.appendChild(flightNumberDisplay);
+
+                // Status container
+                const statusInfoContainer = document.createElement('div');
+                statusInfoContainer.className = 'status-info-container';
+
+                // Status Date
+                const statusDateDisplay = document.createElement('div');
+                statusDateDisplay.className = 'status-date';
+                statusDateDisplay.textContent = `Date: ${status.Date}`;
+                statusInfoContainer.appendChild(statusDateDisplay);
+
+                // Flight Status
+                const flightStatusDisplay = document.createElement('div');
+                flightStatusDisplay.className = 'flight-status';
+                flightStatusDisplay.textContent = `Status: ${status.Status}`;
+                statusInfoContainer.appendChild(flightStatusDisplay);
+
+                // Append flight number and status info to the main status div
+                statusDiv.appendChild(flightNumberContainer);
+                statusDiv.appendChild(statusInfoContainer);
+
+                // Append the complete status info to the container
+                statusContainer.appendChild(statusDiv);
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching flight status:', error);
+            statusContainer.textContent = 'Failed to load flight status.';
+        });
+}
+
+
 document.addEventListener('DOMContentLoaded', function () {
     // Handle Flight Search Form Submission
     const flightSearchForm = document.getElementById('flightSearchForm');
@@ -117,9 +179,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const departingAirport = document.getElementById('departingAirport').value;
         const arrivingAirport = document.getElementById('arrivingAirport').value;
         const date = document.getElementById('date').value;
-        
-        // Implement your search logic here
 
+        // Implement your search logic here
         queryAndDisplayFlights(departingAirport, arrivingAirport, date);
 
         console.log(`Searching flights from ${departingAirport} to ${arrivingAirport} on ${date}`);
@@ -134,6 +195,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const statusDate = document.getElementById('statusDate').value;
 
         // Implement your status check logic here
+        checkAndDisplayStatus(flightNumber, statusDate);
         console.log(`Checking status for flight ${flightNumber} on ${statusDate}`);
     });
 });
