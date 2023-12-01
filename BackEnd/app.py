@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request, session
 from flask_cors import CORS
-
+from datetime import timedelta, date, time
+from datetime import datetime as dt
 from utils import *
 
 app = Flask(__name__)
@@ -251,6 +252,42 @@ def create_airplane():
         connection.close()
 
 
+
+
+@app.route("/api/update_status", methods=["GET"])
+def update_status():
+    # Retrieve query parameters
+    value_dict = {}
+    
+    attribute_list = ['Status','FlightNumber', 'DepartingDateTime']
+    for attribute in attribute_list:
+        value_dict[attribute] = request.args.get(attribute, type=str)
+    # Data type conversions
+    print(value_dict)
+    value_dict['DepartingDateTime'] = dt.strptime(value_dict['DepartingDateTime'], '%Y-%m-%d %H:%M:%S')
+    connection = get_db_connection()
+    ## print(value_dict)
+    try:
+        with connection.cursor() as cursor:
+            # Construct and execute SQL query with parameterized queries
+            sql = """
+                    UPDATE flights SET Status = %s WHERE FlightNumber = %s AND DepartingDateTime = %s
+            """
+            cursor.execute(sql, tuple(value_dict.values()))
+            connection.commit()
+
+            # Assuming you want to fetch the recently added flight data
+            # Query to fetch the flight details using primary key or unique identifier is preferred
+            # For demonstration, using the same values
+            cursor.execute("SELECT * FROM flights WHERE FlightNumber = %s AND DepartingDateTime = %s", (value_dict['FlightNumber'], value_dict['DepartingDateTime']))
+            flights = cursor.fetchall()
+            # Fetch all results
+            return jsonify(flights)
+    finally:
+        connection.close()
+
 if __name__ == "__main__":
     app.run(debug=True)
     # print(get_upcoming_flights())
+
+
