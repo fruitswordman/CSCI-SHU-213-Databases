@@ -21,8 +21,8 @@ class CustomJSONEncoder(json.JSONEncoder):
 DB_SETTINGS = {
     "host": "localhost",
     "user": "root",
-    "password": "123456",
-    "db": "databases_project",
+    "password": "",
+    "db": "Final project",
     "cursorclass": pymysql.cursors.DictCursor,
 }
 

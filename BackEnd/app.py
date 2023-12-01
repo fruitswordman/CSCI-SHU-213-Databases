@@ -212,6 +212,44 @@ def create_airport():
     finally:
         connection.close()
 
+@app.route("/api/create_airplane", methods=["GET"])
+def create_airplane():
+    # Retrieve query parameters
+    value_dict = {}
+    attribute_list = ['AirplaneID',
+                    'SeatingCapacity',
+                    'Airline'
+
+
+# AirplaneID
+# SeatingCapacity
+# Airline
+    ]
+    for attribute in attribute_list:
+        value_dict[attribute] = request.args.get(attribute, type=str)
+
+    connection = get_db_connection()
+    try:
+        with connection.cursor() as cursor:
+            # Construct and execute SQL query with parameterized queries
+            sql = """
+                INSERT INTO airplanes (AirplaneID,SeatingCapacity,Airline)
+                VALUES (%s, %s, %s)
+            """
+            cursor.execute(sql, tuple(value_dict.values()))
+
+            connection.commit()
+            print("insertion commit")
+            # Assuming you want to fetch the recently added flight data
+            # Query to fetch the flight details using primary key or unique identifier is preferred
+            # For demonstration, using the same values
+            cursor.execute("SELECT * FROM airplanes")
+            airplanes = cursor.fetchall()
+            # Fetch all results
+            return jsonify(airplanes)
+    finally:
+        connection.close()
+
 
 if __name__ == "__main__":
     app.run(debug=True)
