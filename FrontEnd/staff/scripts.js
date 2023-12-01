@@ -513,3 +513,146 @@ function CreateDisplayAirplane(AirplaneID,SeatingCapacity,Airline) {
             flightsContainer.textContent = 'Failed to load Airplanes.';
         });
 }
+
+
+
+
+const updateStatusForm = document.getElementById('UpdateStatusForm');
+updateStatusForm.addEventListener('submit', function (event) {
+    event.preventDefault();
+    const FlightNumber= document.getElementById("FlightNumber1").value
+    const DepartingDateTime = document.getElementById("DepartingDateTime1").value
+    const Status = document.getElementById("Status1").value
+    // Implement your search logic here
+
+    updateAndDisplayFlights(
+        Status,
+        FlightNumber,
+        DepartingDateTime
+    );
+
+    // console.log(`Searching flights from ${departingAirport} to ${arrivingAirport} on ${date}`);
+
+});
+
+function updateAndDisplayFlights(
+    Status,
+    FlightNumber,
+    DepartingDateTime) {
+    const flightsContainer = document.getElementById('updateStatusResult');
+    flightsContainer.innerHTML = '';
+
+    // Construct the URL with query parameters
+    const url = new URL('http://127.0.0.1:5000/api/update_status');
+    const params = {
+        Status,
+        FlightNumber,
+        DepartingDateTime};
+    console.log(params)
+    url.search = new URLSearchParams(params).toString();
+    // console.log(url)
+    fetch(url)  // Make sure the port matches the Flask server
+        .then(response => response.json())
+        .then(flights => {
+            console.log(flights);
+            flights.forEach(flight => {
+                const flightDiv = document.createElement('div');
+                flightDiv.className = 'flight';
+
+                // Price container
+                const priceContainer = document.createElement('div');
+                priceContainer.className = 'flight-price-container';
+
+                // Price
+                const flightPrice = document.createElement('div');
+                flightPrice.className = 'flight-price';
+                flightPrice.textContent = `￥${flight.Price.slice(0, -3)}`;
+                priceContainer.appendChild(flightPrice);
+
+                // Times and airports container
+                const timesAirportsContainer = document.createElement('div');
+                timesAirportsContainer.className = 'flight-times-airports-container';
+
+                // Departing container within times-airports container
+                const departingContainer = document.createElement('div');
+                departingContainer.className = 'departing-container';
+
+                // Departing Time
+                const flightDepartingTime = document.createElement('div');
+                flightDepartingTime.className = 'flight-departing-time';
+                flightDepartingTime.textContent = `${flight.DepartingTime}`;
+                departingContainer.appendChild(flightDepartingTime);
+
+                // Departing Airport
+                const flightDepartingAirport = document.createElement('div');
+                flightDepartingAirport.className = 'flight-departing-airport';
+                flightDepartingAirport.textContent = `${flight.DepartureAirport}`;
+                departingContainer.appendChild(flightDepartingAirport);
+
+                // Arrow container
+                const arrowContainer = document.createElement('div');
+                arrowContainer.className = 'flight-arrow-container';
+                arrowContainer.textContent = '→'; // Using a simple right arrow unicode character
+
+                // Arriving container within times-airports container
+                const arrivingContainer = document.createElement('div');
+                arrivingContainer.className = 'arriving-container';
+
+                // Arriving Time
+                const flightArrivingTime = document.createElement('div');
+                flightArrivingTime.className = 'flight-arriving-time';
+                flightArrivingTime.textContent = `${flight.ArrivingTime}`;
+                arrivingContainer.appendChild(flightArrivingTime);
+
+                // Arriving Airport
+                const flightArrivingAirport = document.createElement('div');
+                flightArrivingAirport.className = 'flight-arriving-airport';
+                flightArrivingAirport.textContent = `${flight.ArrivalAirport}`;
+                arrivingContainer.appendChild(flightArrivingAirport);
+
+                // Append departing container, arrow, and arriving container to times-airports container
+                timesAirportsContainer.appendChild(departingContainer);
+                timesAirportsContainer.appendChild(arrowContainer);
+                timesAirportsContainer.appendChild(arrivingContainer);
+
+                // Info container
+                const infoContainer = document.createElement('div');
+                infoContainer.className = 'flight-info-container';
+
+                // Airline
+                const flightAirline = document.createElement('div');
+                flightAirline.className = 'flight-airline';
+                flightAirline.textContent = `${flight.Airline}`;
+                infoContainer.appendChild(flightAirline);
+
+                // Flight Number
+                const flightNumber = document.createElement('div');
+                flightNumber.className = 'flight-number';
+                flightNumber.textContent = `${flight.FlightNumber}`;
+                infoContainer.appendChild(flightNumber);
+
+                // Date
+                const flightDate = document.createElement('div');
+                flightDate.className = 'flight-date';
+                flightDate.textContent = `${flight.Date}`;
+                infoContainer.appendChild(flightDate);
+
+                const flightStatus = document.createElement('div');
+                flightStatus.className = 'flight-status';
+                flightStatus.textContent = `${flight.Status}`;
+                infoContainer.appendChild(flightStatus);
+
+                // Append containers to the main flight div
+                flightDiv.appendChild(infoContainer);
+                flightDiv.appendChild(timesAirportsContainer);
+                flightDiv.appendChild(priceContainer);
+
+                // Append the complete flight info to the container
+                flightsContainer.appendChild(flightDiv);
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching flights:', error);
+            flightsContainer.textContent = 'Failed to load flights.';
+        });
+}
