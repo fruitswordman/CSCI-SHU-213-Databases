@@ -412,7 +412,7 @@ def booking_agent_purchase_flight():
     FlightNumber = data.get("FlightNumber")
     Date = data.get("Date")
     DepartingTime = data.get("DepartingTime")
-    CustomerEmail = data.get("CustomerID")
+    CustomerEmail = data.get("CustomerEmail")
 
     success = process_flight_bookingagent_purchase(FlightNumber, Date, DepartingTime, CustomerEmail)
     if success:
