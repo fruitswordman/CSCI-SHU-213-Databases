@@ -57,7 +57,7 @@ async function fetchAndDisplayFlights() {
     flightsContainer.innerHTML = '';
 
     try {
-        const response = await fetch('http://127.0.0.1:5000/api/flights/my_flight');
+        const response = await fetch('http://127.0.0.1:5000/api/flights/upcoming');
         const flights = await response.json();
 
         flights.forEach(flight => {
