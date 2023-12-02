@@ -708,7 +708,6 @@ def show_agents():
         connection.close()
 
 
-# 'http://127.0.0.1:5000/api/add_agent'
 @app.route("/api/add_agent", methods=["GET"])
 def add_agent():
     connection = get_db_connection()
@@ -722,6 +721,21 @@ def add_agent():
             return jsonify({"success": True, "message": "Agent added successfully."})
     except:
         return jsonify({"success": False, "message": "Failed to add agent."})
+    finally:
+        connection.close()
+
+
+# fetch all flights info with their departing and arriving lat and long
+@app.route("/api/flights/all_geo", methods=["GET"])
+def get_all_flights_geo():
+    connection = get_db_connection()
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("CALL fetchFlightGeo();")
+            data = cursor.fetchall()
+            return jsonify({"success": True, "data": data})
+    except:
+        return jsonify({"success": False, "message": "Failed to fetch flights info."})
     finally:
         connection.close()
 

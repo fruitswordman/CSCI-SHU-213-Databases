@@ -199,3 +199,49 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log(`Checking status for flight ${flightNumber} on ${statusDate}`);
     });
 });
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    // Initialize the map on the "mapid" div with a given center and zoom
+    var mymap = L.map('mapid').setView([27.86166, 104.195397], 5); // Center on China with a zoom level of 4
+
+    // Add a tile layer to add to our map
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+        maxZoom: 18,
+    }).addTo(mymap);
+
+    // Fetch all flights info with their departing and arriving lat and long
+    async function fetchFlightGeoData() {
+        try {
+            const response = await fetch('http://127.0.0.1:5000/api/flights/all_geo');
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const jsonResponse = await response.json();
+            if (jsonResponse.success) {
+                const flights = jsonResponse.data;
+                // Use the data to add flight routes to the map
+                flights.forEach(flight => {
+                    // Draw a polyline between departure and arrival coordinates
+                    L.polyline([
+                        [flight.DepartureLattitude, flight.DepartureLongitude],
+                        [flight.ArrivalLattitude, flight.ArrivalLongitude]
+                    ], {
+                        color: 'darkblue',
+                        weight: 0.1,
+                        opacity: 0.1,
+                        smoothFactor: 1
+                    }).addTo(mymap);
+                });
+            } else {
+                console.error('Failed to fetch flights info:', jsonResponse.message);
+            }
+        } catch (error) {
+            console.error('Fetch error:', error);
+        }
+    }
+
+    // Call the function to fetch the data and add routes to the map
+    fetchFlightGeoData();
+});
