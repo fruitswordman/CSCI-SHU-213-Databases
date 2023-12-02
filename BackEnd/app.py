@@ -685,6 +685,47 @@ def grant_permission():
         connection.close()
 
 
+@app.route("/api/show_agents", methods=["GET"])
+def show_agents():
+    connection = get_db_connection()
+
+    try:
+        with connection.cursor() as cursor:
+            sql = f"""
+            select b.name Name, b.email Email, bawf.airline Airline
+            from booking_agents b
+            natural join booking_agents_work_for bawf
+            where airline = '{session['Airline']}'
+            """
+            cursor.execute(sql)
+            agents = cursor.fetchall()
+            print(agents)
+            return jsonify(agents)
+    except Exception as e:
+        print(e)
+        return jsonify("Failed to show agents.")
+    finally:
+        connection.close()
+
+
+# 'http://127.0.0.1:5000/api/add_agent'
+@app.route("/api/add_agent", methods=["GET"])
+def add_agent():
+    connection = get_db_connection()
+
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                f'INSERT INTO booking_agents_work_for (Airline, Email) VALUES ("{session["Airline"]}", "{request.args.get("agentEmail", type=str)}")'
+            )
+            connection.commit()
+            return jsonify({"success": True, "message": "Agent added successfully."})
+    except:
+        return jsonify({"success": False, "message": "Failed to add agent."})
+    finally:
+        connection.close()
+
+
 if __name__ == "__main__":
     app.run(debug=True)
     # print(get_upcoming_flights())

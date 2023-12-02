@@ -273,6 +273,7 @@ function AddDisplayAirport(AirportName,
         });
 }
 
+// grant permission
 
 const GrantPermissionForm = document.getElementById('GrantPermissionForm');
 GrantPermissionForm.addEventListener('submit', function (event) {
@@ -320,8 +321,6 @@ function GrantPermission(
                 return
             }
 
-
-
             message.forEach(user => {
 
 
@@ -359,20 +358,12 @@ function GrantPermission(
 
 
 
-
-
-
+// view customers
 
 const TopCustomerplotForm = document.getElementById('TopCustomerplotForm');
 TopCustomerplotForm.addEventListener('submit', function (event) {
     event.preventDefault();
-
-
-    // Implement your search logic here
-
     Customer_ploting()
-    // console.log(`Searching flights from ${departingAirport} to ${arrivingAirport} on ${date}`);
-
 });
 
 
@@ -396,11 +387,6 @@ function Customer_ploting() {
                 emails.push(customer.CustomerEmail)
                 frequency.push(customer.Frequency)
             });
-
-
-
-            // console.log(frequency)
-            // console.log(emails)
             const data = frequency
 
             // Get the canvas element and its context
@@ -446,15 +432,142 @@ function Customer_ploting() {
                 }
             });
             TopCustomerplotdiv.appendChild(canvas_frame);
-
-
         })
         .catch(error => {
             console.error('Error fetching Customers:', error);
             flightsContainer.textContent = 'Failed to load Customers.';
         });
-
 }
+
+
+// view booking agents
+
+document.querySelector('[data-panelid="viewAgentsPanel"]').addEventListener('click', function () {
+    loadAgents();
+});
+
+
+function loadAgents() {
+    fetch('http://127.0.0.1:5000/api/show_agents')  // Replace with your actual API endpoint
+        .then(response => response.json())
+        .then(agents => {
+            displayAgents(agents);
+        })
+        .catch(error => console.error('Error fetching agents:', error));
+}
+
+function displayAgents(agents) {
+    const agentsList = document.getElementById('agentsList');
+    agentsList.innerHTML = ''; // Clear existing agents
+
+    agents.forEach(agent => {
+        // Create the main container for each agent
+        const agentDiv = document.createElement('div');
+        agentDiv.className = 'agent-item';
+
+        // Create and append name element
+        const nameDiv = document.createElement('div');
+        nameDiv.className = 'agent-name';
+        nameDiv.textContent = `Name: ${agent.Name}`;
+        agentDiv.appendChild(nameDiv);
+
+        // Create and append email element
+        const emailDiv = document.createElement('div');
+        emailDiv.className = 'agent-email';
+        emailDiv.textContent = `Email: ${agent.Email}`;
+        agentDiv.appendChild(emailDiv);
+
+        // Create and append airline element
+        const airlineDiv = document.createElement('div');
+        airlineDiv.className = 'agent-airline';
+        airlineDiv.textContent = `Airline: ${agent.Airline}`;
+        agentDiv.appendChild(airlineDiv);
+
+        // Append the agent div to the list
+        agentsList.appendChild(agentDiv);
+    });
+}
+
+
+// view reports
+
+const reportForm = document.getElementById('reportSelectionForm');
+
+reportForm.addEventListener('submit', function (event) {
+    event.preventDefault();
+    generateReport();
+});
+
+function generateReport() {
+    const reportType = document.getElementById('reportType').value;
+
+    // Placeholder for fetching data. This should be replaced with an actual API call or data fetching logic.
+    if (reportType === 'monthly') {
+        fetchMonthlyReportData();
+    } else if (reportType === 'annual') {
+        fetchAnnualReportData();
+    } else {
+        // Handle other report types or show an error
+    }
+}
+
+
+function fetchMonthlyReportData() {
+    // Example API call (replace with your actual API endpoint and logic)
+    fetch('/api/monthly-report')
+        .then(response => response.json())
+        .then(data => updateReportResults(data))
+        .catch(error => console.error('Error fetching monthly data:', error));
+}
+
+function fetchAnnualReportData() {
+    // Similar to fetchMonthlyReportData, but for annual data
+}
+
+function updateReportResults(data) {
+    const resultDiv = document.getElementById('reportsResult');
+    resultDiv.innerHTML = ''; // Clear existing content
+
+    // Constructing a table (or other elements) based on the data
+    const table = document.createElement('table');
+    // ... build your table or other UI elements with the data
+    // Example: table.innerHTML = '<tr><td>' + data.someField + '</td></tr>';
+
+    resultDiv.appendChild(table);
+}
+
+
+// add agent
+
+const addAgentForm = document.getElementById('addAgentForm');
+addAgentForm.addEventListener('submit', function (event) {
+    event.preventDefault();
+    const agentEmail = document.getElementById("AgentEmail").value;
+
+    // Implement your add agent logic here
+    addDisplayAgent(agentEmail);
+});
+
+function addDisplayAgent(agentEmail) {
+    const agentContainer = document.getElementById('addAgentResult');
+
+    // Assuming the URL and params for adding a booking agent
+    const url = new URL('http://127.0.0.1:5000/api/add_agent');
+    const params = { agentEmail };
+    url.search = new URLSearchParams(params).toString();
+
+    fetch(url)
+        .then(response => response.json())
+        .then(result => {
+            alert(result.message); // Display the result message
+            if (result.success) {
+                document.querySelector('[data-panelid="viewAgentsPanel"]').click();
+                loadAgents();
+            }
+        })
+}
+
+
 
 function logoutAndPost() {
     // Define the URL to which you want to post data
