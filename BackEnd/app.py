@@ -263,55 +263,30 @@ def login():
 @app.route("/api/create_flights", methods=["GET"])
 def create_flight():
     # Retrieve query parameters
-    value_dict = {}
-    attribute_list = [
-        "FlightNumber",
-        "DepartingTime",
-        "ArrivingTime",
-        "Price",
-        "Status",
-        "DepartureAirport",
-        "ArrivalAirport",
-        "Airline",
-        "Airplane",
-        "Date",
-    ]
-    for attribute in attribute_list:
-        value_dict[attribute] = request.args.get(attribute, type=str)
-
-    # Data type conversions
-    value_dict["Price"] = decimal.Decimal(value_dict["Price"])
-    value_dict["Date"] = datetime.strptime(value_dict["Date"], "%Y-%m-%d").date()
-    value_dict["DepartingTime"] = datetime.strptime(
-        value_dict["DepartingTime"], "%H:%M:%S"
-    ).time()
-    value_dict["ArrivingTime"] = datetime.strptime(
-        value_dict["ArrivingTime"], "%H:%M:%S"
-    ).time()
+    flight_data = {
+        "FlightNumber": request.args.get("FlightNumber", type=str),
+        "DepartingTime": request.args.get("DepartingTime", type=str),
+        "ArrivingTime": request.args.get("ArrivingTime", type=str),
+        "Price": request.args.get("Price", type=str),
+        "Status": request.args.get("Status", type=str),
+        "DepartureAirport": request.args.get("DepartureAirport", type=str),
+        "ArrivalAirport": request.args.get("ArrivalAirport", type=str),
+        "Airline": request.args.get("Airline", type=str),
+        "Airplane": request.args.get("Airplane", type=str),
+        "Date": request.args.get("Date", type=str),
+        "StaffUsername": session["username"],
+    }
 
     connection = get_db_connection()
     try:
         with connection.cursor() as cursor:
-            # Construct and execute SQL query with parameterized queries
-            sql = """
-                INSERT INTO flights (FlightNumber, DepartingTime, ArrivingTime, Price, Status, DepartureAirport, ArrivalAirport, Airline, Airplane, Date)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-            """
-            cursor.execute(sql, tuple(value_dict.values()))
-
-            connection.commit()
-
-            cursor.execute(
-                "SELECT * FROM flights WHERE FlightNumber = %s AND Date = %s AND DepartingTime = %s",
-                (
-                    value_dict["FlightNumber"],
-                    value_dict["Date"],
-                    value_dict["DepartingTime"],
-                ),
-            )
+            # Call the stored procedure
+            cursor.callproc("CreateAndFetchFlight", tuple(flight_data.values()))
             flights = cursor.fetchall()
-            # Fetch all results
             return jsonify(flights)
+    except Exception as e:
+        print(e)
+        return jsonify(f"Failed to create flight. {e}")
     finally:
         connection.close()
 
@@ -692,10 +667,7 @@ def grant_permission():
             cursor.execute(sql)
             same_company = cursor.fetchall()
             if same_company:
-                grant = """
-                    INSERT INTO `permissions` 
-                    VALUES (%s,%s);
-                """
+                grant = "CALL UpdateUserPermission(%s,%s);"
                 cursor.execute(grant, tuple(value_dict.values()))
                 connection.commit()
                 check = """
