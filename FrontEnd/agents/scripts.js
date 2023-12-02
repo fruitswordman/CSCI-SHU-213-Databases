@@ -150,6 +150,103 @@ document.getElementById('searchFlightsResult').addEventListener('click', async f
 });
 
 
+const TopCustomerplotForm = document.getElementById('TopCustomerplotForm');
+TopCustomerplotForm.addEventListener('submit', function (event) {
+    event.preventDefault();
+    // Implement your search logic here
+
+    Customer_ploting()
+    // console.log(`Searching flights from ${departingAirport} to ${arrivingAirport} on ${date}`);
+
+});
+
+
+function Customer_ploting() {
+    // Sample data for the bar plot
+    const TopCustomerplotdiv = document.getElementById("TopCustomerplot")
+    TopCustomerplotdiv.innerHTML = '';
+    // Construct the URL with query parameters
+    const url = new URL('http://127.0.0.1:5000/api/Top5_customer_bookingAgent');
+    const params = {};
+    url.search = new URLSearchParams(params).toString();
+    // console.log(url)
+    var frequency = []
+    var emails = []
+
+    fetch(url)  // Make sure the port matches the Flask server
+        .then(response => response.json())
+        .then(customer_frequency => {
+            // console.log(customer_frequency);
+            customer_frequency.forEach(customer => {
+                emails.push(customer.CustomerEmail)
+                frequency.push(customer.Frequency)
+            });
+
+
+
+            // console.log(frequency)
+            // console.log(emails)
+            const data = frequency
+
+            // Get the canvas element and its context
+            var canvas_frame = document.createElement("canvas");
+
+            // Set attributes such as width and height
+            canvas_frame.width = 200;
+            canvas_frame.height = 100;
+
+
+            const canvas = canvas_frame.getContext('2d');
+
+            // Create a bar plot using Chart.js
+            const barPlot = new Chart(canvas, {
+                type: 'bar',
+                data: {
+                    labels: emails,
+                    datasets: [{
+                        label: 'Frequency',
+                        data: data,
+                        backgroundColor: 'rgba(75, 192, 192, 0.7)', // Bar color
+                        borderColor: 'rgba(75, 192, 192, 1)', // Border color
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: {
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Category'
+                            }
+                        },
+                        y: {
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Value'
+                            }
+                        }
+                    }
+                }
+            });
+            TopCustomerplotdiv.appendChild(canvas_frame);
+
+
+        })
+        .catch(error => {
+            console.error('Error fetching Customers:', error);
+            flightsContainer.textContent = 'Failed to load Customers.';
+        });
+
+}
+
+
+
+
+
+
+
 function logoutAndPost() {
     // Define the URL to which you want to post data
     const url = 'http://localhost:5000/api/logout';

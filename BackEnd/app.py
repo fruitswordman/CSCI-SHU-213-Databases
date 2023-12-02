@@ -564,6 +564,41 @@ def Top5_customer():
         connection.close()
 
 
+
+@app.route("/api/Top5_customer_bookingAgent", methods=["GET"])
+def Top5_customer_bookingAgent():
+    connection = get_db_connection()
+
+    try:
+        with connection.cursor() as cursor:
+            # Construct and execute SQL query with parameterized queries
+            sql = f"""
+                
+
+                SELECT CustomerEmail, COUNT(TicketID) AS Frequency
+                FROM purchase
+                Where BookingAgentEmail  = '{session["username"]}'
+                GROUP BY CustomerEmail
+                ORDER BY Frequency DESC
+                LIMIT 5;
+
+            """
+            cursor.execute(sql)
+            connection.commit()
+
+            customers_frequency = cursor.fetchall()
+
+            # Fetch all results
+            return jsonify(customers_frequency)
+    finally:
+        connection.close()
+
+
+
+
+
+
+
 @app.route("/api/grant_permission", methods=["GET"])
 def grant_permission():
     value_dict = {}
