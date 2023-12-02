@@ -139,11 +139,7 @@ document.getElementById('searchFlightsResult').addEventListener('click', async f
                 body: JSON.stringify(data)
             });
             const result = await response.json();
-            if (result.success) {
-                alert(result.message);
-            } else {
-                alert(result.message);
-            }
+            alert(result.message);
         }
         catch (error) {
             console.error('Error:', error);

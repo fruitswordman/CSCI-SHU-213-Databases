@@ -10,6 +10,16 @@ app.json_encoder = CustomJSONEncoder
 CORS(app)
 session = {}
 
+
+@app.route("/api/logout", methods=["GET"])
+def logoutPost():
+    try:
+        session.clear()
+        return jsonify({"success": True, "message": "You have been logged out."})
+    except:
+        return jsonify({"success": False, "message": "Failed to logout."})
+
+
 @app.route("/api/flights/upcoming", methods=["GET"])
 def get_upcoming_flights():
     connection = get_db_connection()
@@ -367,7 +377,9 @@ def process_flight_purchase(FlightNumber, Date, DepartingTime):
     except:
         return False
     finally:
-        print(f"Processing purchase for Flight {FlightNumber} on {Date} at {DepartingTime}")
+        print(
+            f"Processing purchase for Flight {FlightNumber} on {Date} at {DepartingTime}"
+        )
         return True
 
 

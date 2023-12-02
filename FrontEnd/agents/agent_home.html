@@ -12,10 +12,10 @@
     <div class="sidebar">
         <ul>
             <li data-panelid="viewFlightsPanel">View My Flights</li>
-            <li data-panelid="searchFlightsPanel">Search For Flights</li>
-            <li data-panelid="viewCommissionPanel">Track My Spending</li>
+            <li data-panelid="searchFlightsPanel">Search & Buy</li>
+            <li data-panelid="viewCommissionPanel">View My Commission</li>
             <li data-panelid="viewTopCustomersPanel">View Top Customers</li>
-            <li onclick="window.location.href = '../login.html'">Logout</li>
+            <li onclick="logoutAndPost()">Logout</li>
         </ul>
     </div>
 
@@ -25,10 +25,30 @@
             <!-- Dynamic content will be loaded here -->
             <div id="flightsList" class="flights-list"></div>
         </div>
+
         <div id="searchFlightsPanel" class="content-panel">
-            <h3>Search For Flights</h3>
-            <!-- Form to create a new flight -->
+            <h3>Search & Buy</h3>
+            <!-- Form to search for a flight -->
+            <form id="searchFlightsForm">
+                <input type="text" id="searchFlightNumber" placeholder="Flight Number">
+                <!-- <label for="searchDepartingTime">Departing Time (HH:MM:SS)</label>
+                <input type="time" id="searchDepartingTime">
+                <label for="searchArrivingTime">Arriving Time (HH:MM:SS)</label>
+                <input type="time" id="searchArrivingTime"> -->
+                <input type="text" id="searchPrice" placeholder="Price">
+                <input type="text" id="searchStatus" placeholder="Status">
+                <input type="text" id="searchDepartureAirport" placeholder="Departure Airport">
+                <input type="text" id="searchArrivalAirport" placeholder="Arrival Airport">
+                <input type="text" id="searchAirline" placeholder="Airline">
+                <input type="text" id="searchAirplane" placeholder="Airplane">
+                <input type="date" id="searchDate">
+                <button type="submit">Search Flight</button>
+            </form>
+            <div id="searchFlightsResult">
+                <!-- Search results will be displayed here -->
+            </div>
         </div>
+
         <div id="viewCommissionPanel" class="content-panel">
             <h3>View Commission</h3>
             <!-- Form to change flight status -->
@@ -37,14 +57,13 @@
             <h3>View Top Customers</h3>
             <!-- Form to change flight status -->
         </div>
-            <!-- Form to add booking agents -->
-        </div>
-        <!-- Logout functionality will be handled by JavaScript -->
+        <!-- Form to add booking agents -->
     </div>
+    <!-- Logout functionality will be handled by JavaScript -->
+</div>
 </div>
 
 <script src="scripts.js"></script>
 </body>
 
 </html>
-
