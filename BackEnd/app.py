@@ -10,6 +10,7 @@ app.json_encoder = CustomJSONEncoder
 CORS(app)
 session = {}
 
+
 @app.route("/api/logout", methods=["GET"])
 def logoutPost():
     try:
@@ -37,8 +38,14 @@ def my_flight():
                 FROM tickets Natural Join flights Natural Join purchase
                 WHERE purchase.CustomerEmail = '{session["username"]}'
                 """
-            # elif account_type == "customer":
-            #     sql =
+            elif account_type == "booking_agent":
+                sql = f"""
+                select f.* 
+                from flights f Join booking_agents_work_for bawf ON f.airline = bawf.airline 
+                WHERE bawf.email = '{session["username"]}' ORDER BY f.departingdatetime DESC;
+                """
+            else:
+                return jsonify("Not authoritized!")
 
             cursor.execute(sql)
 
@@ -95,6 +102,65 @@ def search_flights():
         sql = "SELECT * FROM flights"
     else:
         sql += " AND ".join(conditions)
+
+    sql += " ORDER BY departingdatetime DESC LIMIT 500;"
+
+    connection = get_db_connection()
+    try:
+        with connection.cursor() as cursor:
+            # Execute the query with the values of the provided parameters
+            cursor.execute(
+                sql,
+                tuple(
+                    query_params[attr] for attr in attribute_list if query_params[attr]
+                ),
+            )
+            flights = cursor.fetchall()
+            return jsonify(flights)
+    finally:
+        connection.close()
+
+
+@app.route("/api/flights/agents_search", methods=["GET"])
+def agents_search_flights():
+    # List of possible query parameters
+    attribute_list = [
+        "FlightNumber",
+        "DepartingTime",
+        "ArrivingTime",
+        "Price",
+        "Status",
+        "DepartureAirport",
+        "ArrivalAirport",
+        "Airline",
+        "Airplane",
+        "Date",
+    ]
+
+    # Retrieve query parameters
+    query_params = {attr: request.args.get(attr, type=str) for attr in attribute_list}
+
+    # Construct the base SQL query
+    sql = f"SELECT flights.* FROM flights JOIN booking_agents_work_for bawf ON flights.airline = bawf.airline WHERE bawf.email = '{session['username']}'"
+
+    # List to hold SQL conditions
+    conditions = []
+
+    # Construct conditions based on provided parameters
+    for attr, value in query_params.items():
+        if value:
+            if attr == "Date":
+                conditions.append(f"DATE({attr}) = %s")
+            elif attr in ["DepartingTime", "ArrivingTime"]:
+                conditions.append(f"TIME({attr}) = %s")
+            elif attr == "Price":
+                conditions.append(f"CAST({attr} AS DECIMAL(10, 2)) = %s")
+            else:
+                conditions.append(f"{attr} = %s")
+
+    # If no conditions were added, remove the WHERE clause
+    if conditions:
+        sql += "AND" + " AND ".join(conditions)
 
     sql += " ORDER BY departingdatetime DESC LIMIT 500;"
 
@@ -389,12 +455,15 @@ def process_flight_purchase(FlightNumber, Date, DepartingTime):
     try:
         with connection.cursor() as cursor:
             sql = """CALL purchaseTicket_NoAgent(%s, Date(%s), Time(%s), %s);"""
-            cursor.execute(sql, (FlightNumber, Date, DepartingTime, session["username"]))
+            cursor.execute(
+                sql, (FlightNumber, Date, DepartingTime, session["username"])
+            )
             connection.commit()
             return True
     except Exception as e:
         print(e)
         return False
+
 
 @app.route("/api/flights/booking_agent_purchase", methods=["POST"])
 def booking_agent_purchase_flight():
@@ -406,19 +475,26 @@ def booking_agent_purchase_flight():
     DepartingTime = data.get("DepartingTime")
     CustomerEmail = data.get("CustomerEmail")
 
-    success = process_flight_bookingagent_purchase(FlightNumber, Date, DepartingTime, CustomerEmail)
+    success = process_flight_bookingagent_purchase(
+        FlightNumber, Date, DepartingTime, CustomerEmail
+    )
     if success:
         return jsonify({"success": True, "message": "Flight purchased successfully!"})
     else:
         return jsonify({"success": False, "message": "Failed to purchase flight."}), 400
 
 
-def process_flight_bookingagent_purchase(FlightNumber, Date, DepartingTime,CustomerEmail):
+def process_flight_bookingagent_purchase(
+    FlightNumber, Date, DepartingTime, CustomerEmail
+):
     connection = get_db_connection()
     try:
         with connection.cursor() as cursor:
             sql = """CALL purchaseTicket(%s, Date(%s), Time(%s), %s, %s);"""
-            cursor.execute(sql, (FlightNumber, Date, DepartingTime,CustomerEmail, session['username']))
+            cursor.execute(
+                sql,
+                (FlightNumber, Date, DepartingTime, CustomerEmail, session["username"]),
+            )
             connection.commit()
             return True
     except Exception as e:
@@ -564,7 +640,6 @@ def Top5_customer():
         connection.close()
 
 
-
 @app.route("/api/Top5_customer_bookingAgent", methods=["GET"])
 def Top5_customer_bookingAgent():
     connection = get_db_connection()
@@ -592,11 +667,6 @@ def Top5_customer_bookingAgent():
             return jsonify(customers_frequency)
     finally:
         connection.close()
-
-
-
-
-
 
 
 @app.route("/api/grant_permission", methods=["GET"])
