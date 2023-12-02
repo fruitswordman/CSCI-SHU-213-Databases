@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, session
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 from datetime import timedelta, date, time
 from datetime import datetime as dt
@@ -8,7 +8,7 @@ app = Flask(__name__)
 app.secret_key = "your_very_secret_key_here"
 app.json_encoder = CustomJSONEncoder
 CORS(app)
-
+session = {}
 
 @app.route("/api/flights/upcoming", methods=["GET"])
 def get_upcoming_flights():
@@ -337,6 +337,38 @@ def update_status():
             return jsonify(flights)
     finally:
         connection.close()
+
+
+@app.route("/api/flights/purchase", methods=["POST"])
+def purchase_flight():
+    # Extract data from the request body
+    data = request.get_json()
+
+    FlightNumber = data.get("FlightNumber")
+    Date = data.get("Date")
+    DepartingTime = data.get("DepartingTime")
+
+    success = process_flight_purchase(FlightNumber, Date, DepartingTime)
+
+    if success:
+        return jsonify({"success": True, "message": "Flight purchased successfully!"})
+    else:
+        return jsonify({"success": False, "message": "Failed to purchase flight."}), 400
+
+
+def process_flight_purchase(FlightNumber, Date, DepartingTime):
+    connection = get_db_connection()
+    try:
+        with connection.cursor() as cursor:
+            sql = """CALL purchaseTicket(%s, Date(%s), Time(%s), %s);"""
+            cursor.execute(sql, (FlightNumber, Date, DepartingTime, session["email"]))
+            connection.commit()
+            result = cursor.fetchone()
+    except:
+        return False
+    finally:
+        print(f"Processing purchase for Flight {FlightNumber} on {Date} at {DepartingTime}")
+        return True
 
 
 if __name__ == "__main__":

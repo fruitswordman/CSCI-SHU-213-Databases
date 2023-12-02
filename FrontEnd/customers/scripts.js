@@ -1,5 +1,27 @@
+// Event listener for sidebar
+document.querySelectorAll('.sidebar ul li').forEach(li => {
+    li.addEventListener('click', e => showPanel(e, li));
+});
+
+function showPanel(e, li) {
+    document.querySelectorAll('.sidebar ul li').forEach(item => {
+        item.classList.remove('active');
+    });
+    document.querySelectorAll('.content-panel').forEach(panel => {
+        panel.classList.remove('active');
+    });
+
+    li.classList.add('active');
+    const panelId = li.getAttribute('data-panelid');
+    const activePanel = document.getElementById(panelId);
+    if (activePanel) {
+        activePanel.classList.add('active');
+    }
+}
+
+
 // Modular function to create flight HTML element
-function createFlightElement(flight) {
+function createFlightElement(flight, showPurchaseButton = false) {
     return `
         <div class="flight">
             <div class="flight-info-container">
@@ -22,11 +44,14 @@ function createFlightElement(flight) {
                 <div class="flight-price">￥${flight.Price.slice(0, -3)}</div>
                 <div class="flight-status">${flight.Status}</div>
             </div>
+            ${showPurchaseButton ? `<button class="purchase-button" data-flightid="${flight.FlightID}">Purchase</button>` : ''}
         </div>
     `;
 }
 
-// Function to fetch and display flights
+
+// display upcoming flightes
+
 async function fetchAndDisplayFlights() {
     const flightsContainer = document.getElementById('flightsList');
     flightsContainer.innerHTML = '';
@@ -45,30 +70,12 @@ async function fetchAndDisplayFlights() {
     }
 }
 
-// Event listener for sidebar
-document.querySelectorAll('.sidebar ul li').forEach(li => {
-    li.addEventListener('click', e => showPanel(e, li));
-});
-
-function showPanel(e, li) {
-    document.querySelectorAll('.sidebar ul li').forEach(item => {
-        item.classList.remove('active');
-    });
-    document.querySelectorAll('.content-panel').forEach(panel => {
-        panel.classList.remove('active');
-    });
-
-    li.classList.add('active');
-    const panelId = li.getAttribute('data-panelid');
-    const activePanel = document.getElementById(panelId);
-    if (activePanel) {
-        activePanel.classList.add('active');
-    }
-}
-
 document.querySelector('[data-panelid="viewFlightsPanel"]').addEventListener('click', function () {
     fetchAndDisplayFlights();
 });
+
+
+// display purchased flights
 
 const searchFlightsForm = document.getElementById('searchFlightsForm');
 searchFlightsForm.addEventListener('submit', function (event) {
@@ -83,10 +90,10 @@ searchFlightsForm.addEventListener('submit', function (event) {
     const Airplane = document.getElementById("searchAirplane").value;
     const Date = document.getElementById("searchDate").value;
 
-    queryAndDisplayFlights(FlightNumber, Price, Status, DepartureAirport, ArrivalAirport, Airline, Airplane, Date);
+    queryAndPurchaseFlights(FlightNumber, Price, Status, DepartureAirport, ArrivalAirport, Airline, Airplane, Date);
 });
 
-async function queryAndDisplayFlights(FlightNumber, Price, Status, DepartureAirport, ArrivalAirport, Airline, Airplane, Date) {
+async function queryAndPurchaseFlights(FlightNumber, Price, Status, DepartureAirport, ArrivalAirport, Airline, Airplane, Date) {
     const flightsContainer = document.getElementById('searchFlightsResult');
     flightsContainer.innerHTML = '';
 
@@ -99,7 +106,7 @@ async function queryAndDisplayFlights(FlightNumber, Price, Status, DepartureAirp
         const flights = await response.json();
 
         flights.forEach(flight => {
-            const flightElement = createFlightElement(flight);
+            const flightElement = createFlightElement(flight, true);
             flightsContainer.insertAdjacentHTML('beforeend', flightElement);
         });
     } catch (error) {
@@ -107,3 +114,39 @@ async function queryAndDisplayFlights(FlightNumber, Price, Status, DepartureAirp
         flightsContainer.textContent = 'Failed to load flights.';
     }
 }
+
+// purchase button listener
+
+document.getElementById('searchFlightsResult').addEventListener('click', async function (event) {
+    if (event.target.classList.contains('purchase-button')) {
+        const FlightNumber = event.target.getAttribute('data-flightid');
+        const Date = event.target.parentElement.querySelector('.flight-date').textContent;
+        const DepartingTime = event.target.parentElement.querySelector('.flight-departing-time').textContent;
+
+        const data = {
+            FlightNumber,
+            Date,
+            DepartingTime,
+        };
+
+        console.log(data);
+        try {
+            const response = await fetch('http://127.0.0.1:5000/api/flights/purchase', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            const result = await response.json();
+            if (result.success) {
+                alert(result.message);
+            } else {
+                alert(result.message);
+            }
+        }
+        catch (error) {
+            console.error('Error:', error);
+        }
+    }
+});
