@@ -44,7 +44,7 @@ function createFlightElement(flight, showPurchaseButton = false) {
                 <div class="flight-price">￥${flight.Price.slice(0, -3)}</div>
                 <div class="flight-status">${flight.Status}</div>
             </div>
-            ${showPurchaseButton ? `<button class="purchase-button" data-flightid="${flight.FlightID}">Purchase</button>` : ''}
+            ${showPurchaseButton ? `<button class="purchase-button" data-flightid="${flight.FlightNumber}">Purchase</button>` : ''}
         </div>
     `;
 }
@@ -57,7 +57,7 @@ async function fetchAndDisplayFlights() {
     flightsContainer.innerHTML = '';
 
     try {
-        const response = await fetch('http://127.0.0.1:5000/api/flights/upcoming');
+        const response = await fetch('http://127.0.0.1:5000/api/flights/my_flight');
         const flights = await response.json();
 
         flights.forEach(flight => {
@@ -139,10 +139,30 @@ document.getElementById('searchFlightsResult').addEventListener('click', async f
                 body: JSON.stringify(data)
             });
             const result = await response.json();
-            alert(result.message);
+            if (result.success) {
+                alert(result.message);
+            } else {
+                alert(result.message);
+            }
         }
         catch (error) {
             console.error('Error:', error);
         }
     }
 });
+
+
+function logoutAndPost() {
+    // Define the URL to which you want to post data
+    const url = 'http://localhost:5000/api/logout';
+
+    fetch(url)
+        .then(response => response.json())
+        .then(result => {
+            alert(result.message); // Display the result message
+        })
+        .finally(() => {
+            // Redirect to login.html after the POST request
+            window.location.href = '../login.html';
+        });
+}

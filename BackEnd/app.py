@@ -20,13 +20,27 @@ def logoutPost():
         return jsonify({"success": False, "message": "Failed to logout."})
 
 
-@app.route("/api/flights/upcoming", methods=["GET"])
-def get_upcoming_flights():
+@app.route("/api/flights/my_flight", methods=["GET"])
+def my_flight():
+    account_type = session["type"]
     connection = get_db_connection()
+
     try:
         with connection.cursor() as cursor:
             # Execute SQL query
-            sql = "SELECT * from flights ORDER BY departingdatetime DESC LIMIT 10;"
+            if account_type == "airline_staff":
+                airline = session["Airline"]
+
+                sql = f"SELECT * FROM flights WHERE Airline = '{airline}' ORDER BY departingdatetime DESC;"
+            elif account_type == "customer":
+                sql = f"""
+                SELECT * 
+                FROM tickets Natural Join flights Natural Join purchase
+                WHERE purchase.CustomerEmail = '{session["username"]}'
+                """
+            # elif account_type == "customer":
+            #     sql =
+
             cursor.execute(sql)
 
             # Fetch all results
@@ -140,10 +154,13 @@ def login():
                 "SELECT * FROM airline_staff WHERE username=%s and password=md5(%s)"
             )
             cursor.execute(staff_query, (username, password))
-            if cursor.fetchone():
+            sinfo = cursor.fetchone()
+
+            if sinfo:
                 print("airline_staff")
                 session["username"] = username
                 session["type"] = "airline_staff"
+                session["Airline"] = sinfo["Airline"]
                 permission_query = (
                     "SELECT permissiontype FROM permissions WHERE username =%s;"
                 )
@@ -166,7 +183,8 @@ def login():
             # Check customer
             query = "SELECT * FROM customers WHERE email=%s and password=md5(%s)"
             cursor.execute(query, (username, password))
-            if cursor.fetchone():
+            cinfo = cursor.fetchone()
+            if cinfo:
                 print("customer")
                 session["username"] = username
                 session["type"] = "customer"
@@ -236,6 +254,8 @@ def create_flight():
 @app.route("/api/add_airport", methods=["GET"])
 def add_airport():
     # Retrieve query parameters
+    if session["permission"] != "Admin":
+        return jsonify("Not authoritized!")
     value_dict = {}
     attribute_list = ["AirportName", "AirportCity", "IATA"]
     for attribute in attribute_list:
@@ -359,7 +379,6 @@ def purchase_flight():
     DepartingTime = data.get("DepartingTime")
 
     success = process_flight_purchase(FlightNumber, Date, DepartingTime)
-
     if success:
         return jsonify({"success": True, "message": "Flight purchased successfully!"})
     else:
@@ -370,17 +389,195 @@ def process_flight_purchase(FlightNumber, Date, DepartingTime):
     connection = get_db_connection()
     try:
         with connection.cursor() as cursor:
-            sql = """CALL purchaseTicket(%s, Date(%s), Time(%s), %s);"""
-            cursor.execute(sql, (FlightNumber, Date, DepartingTime, session["email"]))
+            sql = """CALL purchaseTicket_NoAgent(%s, Date(%s), Time(%s), %s);"""
+            cursor.execute(sql, (FlightNumber, Date, DepartingTime, session["username"]))
             connection.commit()
-            result = cursor.fetchone()
-    except:
+            return True
+    except Exception as e:
+        print(e)
         return False
+
+
+@app.route("/api/register_customer", methods=["GET"])
+def register_customer():
+    value_dict = {}
+
+    attribute_list = [
+        "Name",
+        "Email",
+        "Password",
+        "BuildingNumber",
+        "Street",
+        "City",
+        "State",
+        "PhoneNumber",
+        "PassportNumber",
+        "PassportExpiration",
+        "PassportCountry",
+        "DateOfBirth",
+    ]
+    for attribute in attribute_list:
+        value_dict[attribute] = request.args.get(attribute, type=str)
+    # Data type conversions
+    print(value_dict)
+    value_dict["PhoneNumber"] = int(value_dict["PhoneNumber"])
+    value_dict["DateOfBirth"] = dt.strptime(value_dict["DateOfBirth"], "%Y-%m-%d")
+    value_dict["PassportExpiration"] = dt.strptime(
+        value_dict["PassportExpiration"], "%Y-%m-%d"
+    )
+
+    connection = get_db_connection()
+    ## print(value_dict)
+    try:
+        with connection.cursor() as cursor:
+            # Construct and execute SQL query with parameterized queries
+            sql = """
+                INSERT INTO customers (Name, Email, Password,BuildingNumber, Street, City, State, PhoneNumber, PassportNumber, PassportExpiration, PassportCountry, DateOfBirth)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+
+            """
+            cursor.execute(sql, tuple(value_dict.values()))
+            connection.commit()
+
+            # Assuming you want to fetch the recently added flight data
+            # Query to fetch the flight details using primary key or unique identifier is preferred
+            # For demonstration, using the same values
+
+            # Fetch all results
+            return jsonify("Successfully registered")
     finally:
-        print(
-            f"Processing purchase for Flight {FlightNumber} on {Date} at {DepartingTime}"
-        )
-        return True
+        connection.close()
+
+
+@app.route("/api/register_staff", methods=["GET"])
+def register_staff():
+    value_dict = {}
+
+    attribute_list = [
+        "username",
+        "password",
+        "firstname",
+        "lastname",
+        "airline",
+        "dateOfBirth",
+    ]
+    for attribute in attribute_list:
+        value_dict[attribute] = request.args.get(attribute, type=str)
+
+    connection = get_db_connection()
+
+    try:
+        with connection.cursor() as cursor:
+            # Construct and execute SQL query with parameterized queries
+            sql = """
+                INSERT INTO airline_staff (username, password, firstname, lastname, airline, DateOfBirth)
+                VALUES (%s, %s, %s, %s, %s, Date(%s));
+            """
+            cursor.execute(sql, tuple(value_dict.values()))
+            connection.commit()
+
+            # Fetch all results
+            return jsonify("Successfully registered")
+    finally:
+        connection.close()
+
+
+@app.route("/api/register_booking_agent", methods=["GET"])
+def register_booking_agent():
+    value_dict = {}
+
+    attribute_list = ["name", "email", "password"]
+    for attribute in attribute_list:
+        value_dict[attribute] = request.args.get(attribute, type=str)
+
+    connection = get_db_connection()
+
+    try:
+        with connection.cursor() as cursor:
+            # Construct and execute SQL query with parameterized queries
+            sql = """
+                INSERT INTO booking_agents (Name, Email, Password)
+                VALUES (%s, %s, %s);
+            """
+            cursor.execute(sql, tuple(value_dict.values()))
+            connection.commit()
+
+            # Fetch all results
+            return jsonify("Successfully registered")
+    finally:
+        connection.close()
+
+
+@app.route("/api/Top5_customer", methods=["GET"])
+def Top5_customer():
+    connection = get_db_connection()
+
+    try:
+        with connection.cursor() as cursor:
+            # Construct and execute SQL query with parameterized queries
+            sql = """
+                
+
+                SELECT CustomerEmail, COUNT(TicketID) AS Frequency
+                FROM purchase
+                GROUP BY CustomerEmail
+                ORDER BY Frequency DESC
+                LIMIT 5;
+
+            """
+            cursor.execute(sql)
+            connection.commit()
+
+            customers_frequency = cursor.fetchall()
+
+            # Fetch all results
+            return jsonify(customers_frequency)
+    finally:
+        connection.close()
+
+
+@app.route("/api/grant_permission", methods=["GET"])
+def grant_permission():
+    value_dict = {}
+
+    attribute_list = ["Username", "Permission"]
+    for attribute in attribute_list:
+        value_dict[attribute] = request.args.get(attribute, type=str)
+
+    connection = get_db_connection()
+
+    if session["permission"] != "Admin":
+        return jsonify("Not authoritized.")
+    try:
+        with connection.cursor() as cursor:
+            # Construct and execute SQL query with parameterized queries
+            sql = f"""
+            select *
+            from airline_staff
+            where Username = '{value_dict["Username"]}' and Airline ='{session["Airline"]}'
+            """
+            cursor.execute(sql)
+            same_company = cursor.fetchall()
+            if same_company:
+                grant = """
+                    INSERT INTO `permissions` 
+                    VALUES (%s,%s);
+                """
+                cursor.execute(grant, tuple(value_dict.values()))
+                connection.commit()
+                check = """
+                Select *
+                from permissions
+                """
+                cursor.execute(check)
+                Permissions = cursor.fetchall()
+
+                # Fetch all results
+                return jsonify(Permissions)
+            else:
+                return jsonify("Not in this company!")
+    finally:
+        connection.close()
 
 
 if __name__ == "__main__":

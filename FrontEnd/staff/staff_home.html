@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="styles.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <title>Airline Staff Dashboard</title>
 </head>
 
@@ -43,7 +44,7 @@
                 <li data-panelid="topDestinationsPanel">View Top Destinations</li>
                 <li data-panelid="grantPermissionsPanel">Grant Permissions</li>
                 <li data-panelid="addAgentsPanel">Add Booking Agents</li>
-                <li onclick="window.location.href = '../login.html'">Logout</li>
+                <li onclick="logoutAndPost()">Logout</li>
             </ul>
         </div>
 
@@ -111,9 +112,9 @@
                 <div id="addAirplaneResult">
                 </div>
 
-
-
             </div>
+
+
             <div id="addAirportPanel" class="content-panel">
                 <h3>Add New Airport</h3>
                 <!-- Form to add a new airport -->
@@ -126,41 +127,67 @@
                 <div id="addAirportResult">
                 </div>
 
+            </div>
 
+
+
+            <div id="viewAgentsPanel" class="content-panel">
+                <h3>Booking Agents</h3>
+                <!-- Information about booking agents -->
+            </div>
+            <div id="viewCustomersPanel" class="content-panel">
+                <h3>Frequent Customers</h3>
+
+                <!-- Information about frequent customers -->
+
+                <form id="TopCustomerplotForm">
+                    <div class="form-group">
+                        <label for="Top 5 C">Render plot for Top 5 frequent customers</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Proceed</button>
+                </form>
+                <div id="TopCustomerplot">
+
+                </div>
+
+
+            </div>
+            <div id="viewReportsPanel" class="content-panel">
+                <h3>Reports</h3>
+                <!-- Sales reports and analytics -->
+            </div>
+            <div id="revenueComparisonPanel" class="content-panel">
+                <h3>Revenue Comparison</h3>
+                <!-- Revenue comparison charts -->
+            </div>
+            <div id="topDestinationsPanel" class="content-panel">
+                <h3>Top Destinations</h3>
+                <!-- List of top destinations -->
+            </div>
+            <div id="grantPermissionsPanel" class="content-panel">
+                <h3>Grant Permissions</h3>
+                <!-- Form to grant permissions to staff -->
+                <form id="GrantPermissionForm">
+                    <div class="form-group">
+                        <label for="Username">The User name of the person to grant </label>
+                        <input type="text" id="Username" placeholder="The User name of the person to grant">
+                        <label for="Permission">The permission you want to grant </label>
+                        <input type="text" id="Permission" placeholder="The permission you want to grant">
+
+                    </div>
+                    <button type="submit" class="btn btn-primary">Proceed</button>
+                </form>
+                <div id="Permission_Result">
+
+                </div>
+            </div>
+            <div id="addAgentsPanel" class="content-panel">
+                <h3>Add Booking Agents</h3>
+                <!-- Form to add booking agents -->
             </div>
 
 
         </div>
-        <div id="viewAgentsPanel" class="content-panel">
-            <h3>Booking Agents</h3>
-            <!-- Information about booking agents -->
-        </div>
-        <div id="viewCustomersPanel" class="content-panel">
-            <h3>Frequent Customers</h3>
-            <!-- Information about frequent customers -->
-        </div>
-        <div id="viewReportsPanel" class="content-panel">
-            <h3>Reports</h3>
-            <!-- Sales reports and analytics -->
-        </div>
-        <div id="revenueComparisonPanel" class="content-panel">
-            <h3>Revenue Comparison</h3>
-            <!-- Revenue comparison charts -->
-        </div>
-        <div id="topDestinationsPanel" class="content-panel">
-            <h3>Top Destinations</h3>
-            <!-- List of top destinations -->
-        </div>
-        <div id="grantPermissionsPanel" class="content-panel">
-            <h3>Grant Permissions</h3>
-            <!-- Form to grant permissions to staff -->
-        </div>
-        <div id="addAgentsPanel" class="content-panel">
-            <h3>Add Booking Agents</h3>
-            <!-- Form to add booking agents -->
-        </div>
-
-    </div>
     </div>
 
     <script src="scripts.js"></script>

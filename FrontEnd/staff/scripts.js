@@ -69,7 +69,7 @@ async function fetchDataAndUpdateUI(url, containerId, createElement) {
 
 
 document.querySelector('[data-panelid="viewFlightsPanel"]').addEventListener('click', function () {
-    const url = 'http://127.0.0.1:5000/api/flights/upcoming';
+    const url = 'http://127.0.0.1:5000/api/flights/my_flight';
     fetchDataAndUpdateUI(url, 'flightsList', createFlightElement);
 });
 
@@ -133,7 +133,7 @@ AddAirplaneForm.addEventListener('submit', function (event) {
     event.preventDefault();
     const AirplaneID = document.getElementById("AirplaneID").value
     const SeatingCapacity = document.getElementById("SeatingCapacity").value
-    const Airline = document.getElementById("cAirline").value
+    const Airline = document.getElementById("AirplaneAirline").value
     // Implement your search logic here
 
     AddDisplayAirplane(
@@ -220,7 +220,7 @@ function AddDisplayAirport(AirportName,
     AirportContainer.innerHTML = '';
 
     // Construct the URL with query parameters
-    const url = new URL('http://127.0.0.1:5000/api/add_airplane');
+    const url = new URL('http://127.0.0.1:5000/api/add_airport');
     const params = {
         AirportName,
         AirportCity,
@@ -233,6 +233,10 @@ function AddDisplayAirport(AirportName,
         .then(response => response.json())
         .then(Airports => {
             //console.log(Airports);
+            if (Airports == "Not authoritized!") {
+                alert(Airports)
+                return
+            }
             Airports.forEach(airport => {
                 const AirportDiv = document.createElement('div');
                 AirportDiv.className = 'Airport';
@@ -266,5 +270,203 @@ function AddDisplayAirport(AirportName,
         .catch(error => {
             console.error('Error fetching airports:', error);
             flightsContainer.textContent = 'Failed to load airports.';
+        });
+}
+
+
+const GrantPermissionForm = document.getElementById('GrantPermissionForm');
+GrantPermissionForm.addEventListener('submit', function (event) {
+    event.preventDefault();
+    const Username = document.getElementById("Username").value
+    const Permission = document.getElementById("Permission").value
+    // Implement your search logic here
+
+    GrantPermission(
+        Username,
+        Permission
+    );
+
+    // console.log(`Searching flights from ${departingAirport} to ${arrivingAirport} on ${date}`);
+
+});
+
+
+function GrantPermission(
+    Username,
+    Permission) {
+    const PermissionContainer = document.getElementById('Permission_Result');
+    PermissionContainer.innerHTML = '';
+
+    // Construct the URL with query parameters
+    const url = new URL('http://127.0.0.1:5000/api/grant_permission');
+    const params = {
+        Username,
+        Permission
+    };
+    url.search = new URLSearchParams(params).toString();
+    // console.log(url)
+
+    fetch(url)  // Make sure the port matches the Flask server
+        .then(response => response.json())
+        .then(message => {
+            console.log(message);
+
+            // if (type(message) != String) {
+            if (message == "Not authoritized.") {
+                alert(message)
+                return
+            } else if (message == "Not in this company!") {
+                alert(message)
+                return
+            }
+
+
+
+            message.forEach(user => {
+
+
+                const permissionDiv = document.createElement('div');
+                permissionDiv.className = 'PermissionDiv';
+
+                // Username
+                const usernameElement = document.createElement('div');
+                usernameElement.className = 'Username';
+                usernameElement.textContent = `${user.Username}`;
+                permissionDiv.appendChild(usernameElement);
+
+                // Permission
+                const permissionElement = document.createElement('div');
+                permissionElement.className = 'Permission';
+                permissionElement.textContent = `${user.PermissionType}`;
+                permissionDiv.appendChild(permissionElement);
+
+                // Append containers to the main flight div
+                // AirportDiv.appendChild(infoContainer);
+
+                // Append the complete flight info to the container
+                PermissionContainer.appendChild(permissionDiv);
+
+            });
+            // }else{
+            //     alert(message)
+            // }
+        })
+        .catch(error => {
+            console.error('Error granting permission:', error);
+            flightsContainer.textContent = 'Failed to load permission.';
+        });
+}
+
+
+
+
+
+
+
+const TopCustomerplotForm = document.getElementById('TopCustomerplotForm');
+TopCustomerplotForm.addEventListener('submit', function (event) {
+    event.preventDefault();
+
+
+    // Implement your search logic here
+
+    Customer_ploting()
+    // console.log(`Searching flights from ${departingAirport} to ${arrivingAirport} on ${date}`);
+
+});
+
+
+function Customer_ploting() {
+    // Sample data for the bar plot
+    const TopCustomerplotdiv = document.getElementById("TopCustomerplot")
+    TopCustomerplotdiv.innerHTML = '';
+    // Construct the URL with query parameters
+    const url = new URL('http://127.0.0.1:5000/api/Top5_customer');
+    const params = {};
+    url.search = new URLSearchParams(params).toString();
+    // console.log(url)
+    var frequency = []
+    var emails = []
+
+    fetch(url)  // Make sure the port matches the Flask server
+        .then(response => response.json())
+        .then(customer_frequency => {
+            // console.log(customer_frequency);
+            customer_frequency.forEach(customer => {
+                emails.push(customer.CustomerEmail)
+                frequency.push(customer.Frequency)
+            });
+
+
+
+            // console.log(frequency)
+            // console.log(emails)
+            const data = frequency
+
+            // Get the canvas element and its context
+            var canvas_frame = document.createElement("canvas");
+
+            // Set attributes such as width and height
+            canvas_frame.width = 200;
+            canvas_frame.height = 100;
+
+
+            const canvas = canvas_frame.getContext('2d');
+
+            // Create a bar plot using Chart.js
+            const barPlot = new Chart(canvas, {
+                type: 'bar',
+                data: {
+                    labels: emails,
+                    datasets: [{
+                        label: 'Frequency',
+                        data: data,
+                        backgroundColor: 'rgba(75, 192, 192, 0.7)', // Bar color
+                        borderColor: 'rgba(75, 192, 192, 1)', // Border color
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: {
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Category'
+                            }
+                        },
+                        y: {
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Value'
+                            }
+                        }
+                    }
+                }
+            });
+            TopCustomerplotdiv.appendChild(canvas_frame);
+
+
+        })
+        .catch(error => {
+            console.error('Error fetching Customers:', error);
+            flightsContainer.textContent = 'Failed to load Customers.';
+        });
+
+}
+
+function logoutAndPost() {
+    // Define the URL to which you want to post data
+    const url = 'http://localhost:5000/api/logout';
+
+    fetch(url)
+        .then(response => response.json())
+        .then(result => {
+            alert(result.message); // Display the result message
+        })
+        .finally(() => {
+            // Redirect to login.html after the POST request
+            window.location.href = '../login.html';
         });
 }

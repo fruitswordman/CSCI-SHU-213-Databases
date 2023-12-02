@@ -29,7 +29,19 @@
             event.preventDefault();
             var userType = document.getElementById('userType').value;
             // window.location.href = userType.toLowerCase() + '_reg.html'; // Redirect to specific registration form
-            window.location.href = 'register.html';
+            
+            if (userType == "Customer"){
+                window.location.href = 'Customer_register.html';
+            }else if (userType == "Agent"){
+                window.location.href = 'BookingAgent_register.html';
+            }else if (userType == "Staff") {
+                window.location.href = 'AirlineStaff_register.html';
+            }else{
+                console.log("Wrong register type!")
+                console.log(userType)
+            }
+            
+            
         });
     </script>
 </body>

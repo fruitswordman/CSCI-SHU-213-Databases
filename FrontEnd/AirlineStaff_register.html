@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Head content with CSS link -->
+    <title>Customer Registration</title>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Staff Registration</h2>
+        <form id="staffRegForm">
+        
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" placeholder="Your username">
+            
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" placeholder="Password">
+            
+                <label for="firstname">Firstname:</label>
+                <input type="text" id="firstname" name="firstname" placeholder="Your firstname">
+            
+                <label for="lastname">Lastname:</label>
+                <input type="text" id="lastname" name="lastname" placeholder="Your lastname">
+            
+                <label for="airline">Airline:</label>
+                <input type="text" id="airline" name="airline" placeholder="Your airline">
+            
+                <label for="DateOfBirth">Date of Birth:</label>
+                <input type="date" id="DateOfBirth" name="DateOfBirth" placeholder="Date of Birth">
+            
+                <button type="submit">Register</button>
+            
+        </form>
+    </div>
+
+    <!-- JavaScript for handling form -->
+
+    <script>
+    document.getElementById("staffRegForm").addEventListener('submit', function (event) {
+    event.preventDefault();
+
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+    const firstname = document.getElementById("firstname").value;
+    const lastname = document.getElementById("lastname").value;
+    const airline = document.getElementById("airline").value;
+    const dateOfBirth = document.getElementById("DateOfBirth").value;
+
+    register_staff(
+        username,
+        password,
+        firstname,
+        lastname,
+        airline,
+        dateOfBirth
+    );
+    // window.location.href = 'index.html';
+});
+
+function register_staff(username, password, firstname, lastname, airline, dateOfBirth) {
+    const url = new URL('http://127.0.0.1:5000/api/register_staff');
+    const params = {
+        username,
+        password,
+        firstname,
+        lastname,
+        airline,
+        dateOfBirth
+    };
+
+    console.log(params);
+    url.search = new URLSearchParams(params).toString();
+    
+    fetch(url)
+        .then(response => response.json())
+        .then(message => {
+            
+            window.location.href = 'index.html';
+            console.log(message);
+        })
+        .catch(error => {
+            console.error('Error registering staff:', error);
+        });
+}
+
+
+
+    </script>
+</body>
+
+</html>

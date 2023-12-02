@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Head content with CSS link -->
+    <title>Customer Registration</title>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Customer Registration</h2>
+        <form id="customerRegForm">
+            <!-- Add relevant input fields for customer registration -->
+            
+                <label for="Name">Name:</label>
+                <input type="text" id="Name" name="Name" placeholder="Your name">
+            
+                <label for="email">Email (Username):</label>
+                <input type="email" id="email" name="email" placeholder="Email (Username)">
+            
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" placeholder="Password">
+
+                <label for="BuildingNumber">Building Number:</label>
+                <input type="text" id="BuildingNumber" name="BuildingNumber" placeholder="Building Number">
+            
+                <label for="Street">Street:</label>
+                <input type="text" id="Street" name="Street" placeholder="Street">                
+                <label for="City">City:</label>
+                <input type="text" id="City" name="City" placeholder="City">
+                
+                <label for="State">State:</label>
+                <input type="text" id="State" name="State" placeholder="State">
+                
+                <label for="PhoneNumber">Phone Number:</label>                   
+                <input type="tel" id="PhoneNumber" name="PhoneNumber" placeholder="Phone Number">
+                
+                <label for="PassportNumber">Passport Number:</label>
+                <input type="text" id="PassportNumber" name="PassportNumber" placeholder="Passport Number">
+                
+                <label for="PassportExpiration">Passport Expiration:</label> 
+                <input type="date" id="PassportExpiration" name="PassportExpiration" placeholder="Passport Expiration date">
+                
+                <label for="PassportCountry">Passport Country:</label>
+                <input type="text" id="PassportCountry" name="PassportCountry" placeholder="Passport Country">
+                
+                <label for="DateOfBirth">Date of Birth:</label>
+                <input type="date" id="DateOfBirth" name="DateOfBirth" placeholder="Date of Birth">
+                    
+            
+    
+            <!-- Other fields like name, address, etc. -->
+            <button type="submit">Register</button>
+        </form>
+    </div>
+    <script>
+        document.getElementById("customerRegForm").addEventListener('submit', function (event) {
+            event.preventDefault();
+
+    const Name = document.getElementById("Name").value;
+    const Email = document.getElementById("email").value;
+    const Password = document.getElementById("password").value;
+    const BuildingNumber = document.getElementById("BuildingNumber").value;
+    const Street = document.getElementById("Street").value;
+    const City = document.getElementById("City").value;
+    const State = document.getElementById("State").value;
+    const PhoneNumber = document.getElementById("PhoneNumber").value;
+    const PassportNumber = document.getElementById("PassportNumber").value;
+    const PassportExpiration = document.getElementById("PassportExpiration").value;
+    const PassportCountry = document.getElementById("PassportCountry").value;
+    const DateOfBirth = document.getElementById("DateOfBirth").value;
+
+
+
+    // const Name = "John Doe";
+    // const Email = "john.doe@example.com";
+    // const Password = "fakepassword123";
+    // const BuildingNumber = "123";
+    // const Street = "Fake Street";
+    // const City = "Faketown";
+    // const State = "FS";
+    // const PhoneNumber = "5551234";
+    // const PassportNumber = "AB123456";
+    // const PassportExpiration = "2025-01-01";
+    // const PassportCountry = "FakeLand";
+    // const DateOfBirth = "1990-05-15";
+
+
+
+        registerDB(Name,
+                    Email,
+                    Password,
+                    BuildingNumber,
+                    Street,
+                    City,
+                    State,
+                    PhoneNumber,
+                    PassportNumber,
+                    PassportExpiration,
+                    PassportCountry,
+                    DateOfBirth)
+        
+    });
+    function registerDB(Name,
+                    Email,
+                    Password,
+                    BuildingNumber,
+                    Street,
+                    City,
+                    State,
+                    PhoneNumber,
+                    PassportNumber,
+                    PassportExpiration,
+                    PassportCountry,
+                    DateOfBirth){
+
+                        const url = new URL('http://127.0.0.1:5000/api/register_customer');
+    const params = {
+                    Name,
+                    Email,
+                    Password,
+                    BuildingNumber,
+                    Street,
+                    City,
+                    State,
+                    PhoneNumber,
+                    PassportNumber,
+                    PassportExpiration,
+                    PassportCountry,
+                    DateOfBirth
+    };
+
+    console.log(params)
+    url.search = new URLSearchParams(params).toString();
+    fetch(url)  // Make sure the port matches the Flask server
+        .then(response => response.json())
+        .then(message => {
+            window.location.href = 'index.html';
+            conosole.log(message)
+        })
+        .catch(error => {
+            console.error('Error register:', error);
+            // flightsContainer.textContent = 'Failed to register.';
+        });
+
+                    }
+
+
+    </script>
+    <!-- JavaScript for handling form -->
+</body>
+
+</html>

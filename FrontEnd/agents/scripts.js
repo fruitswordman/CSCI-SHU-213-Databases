@@ -162,5 +162,3 @@ function logoutAndPost() {
             window.location.href = '../login.html';
         });
 }
-
-
