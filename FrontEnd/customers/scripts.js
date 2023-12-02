@@ -70,8 +70,8 @@ document.querySelector('[data-panelid="viewFlightsPanel"]').addEventListener('cl
     fetchAndDisplayFlights();
 });
 
-const createFlightForm = document.getElementById('searchFlightsForm');
-createFlightForm.addEventListener('submit', function (event) {
+const searchFlightsForm = document.getElementById('searchFlightsForm');
+searchFlightsForm.addEventListener('submit', function (event) {
     event.preventDefault();
 
     const FlightNumber = document.getElementById("searchFlightNumber").value;

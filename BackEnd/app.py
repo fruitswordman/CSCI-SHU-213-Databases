@@ -223,8 +223,8 @@ def create_flight():
         connection.close()
 
 
-@app.route("/api/create_airport", methods=["GET"])
-def create_airport():
+@app.route("/api/add_airport", methods=["GET"])
+def add_airport():
     # Retrieve query parameters
     value_dict = {}
     attribute_list = ["AirportName", "AirportCity", "IATA"]
@@ -254,18 +254,11 @@ def create_airport():
         connection.close()
 
 
-@app.route("/api/create_airplane", methods=["GET"])
+@app.route("/api/add_airplane", methods=["GET"])
 def create_airplane():
     # Retrieve query parameters
     value_dict = {}
-    attribute_list = [
-        "AirplaneID",
-        "SeatingCapacity",
-        "Airline"
-        # AirplaneID
-        # SeatingCapacity
-        # Airline
-    ]
+    attribute_list = ["AirplaneID", "SeatingCapacity", "Airline"]
     for attribute in attribute_list:
         value_dict[attribute] = request.args.get(attribute, type=str)
 
@@ -278,7 +271,7 @@ def create_airplane():
                 VALUES (%s, %s, %s)
             """
             cursor.execute(sql, tuple(value_dict.values()))
-
+            # TODO fetch only one
             connection.commit()
             print("insertion commit")
             # Assuming you want to fetch the recently added flight data
@@ -295,36 +288,52 @@ def create_airplane():
 @app.route("/api/update_status", methods=["GET"])
 def update_status():
     # Retrieve query parameters
-    value_dict = {}
+    value_dict = {
+        "Status": request.args.get("Status", type=str),
+        "FlightNumber": request.args.get("FlightNumber", type=str),
+        "Date": request.args.get("Date", type=str),
+        "DepartingTime": request.args.get("DepartingTime", type=str),
+    }
 
-    attribute_list = ["Status", "FlightNumber", "DepartingDateTime"]
-    for attribute in attribute_list:
-        value_dict[attribute] = request.args.get(attribute, type=str)
-    # Data type conversions
-    print(value_dict)
-    value_dict["DepartingDateTime"] = dt.strptime(
-        value_dict["DepartingDateTime"], "%Y-%m-%d %H:%M:%S"
-    )
     connection = get_db_connection()
-    ## print(value_dict)
     try:
         with connection.cursor() as cursor:
-            # Construct and execute SQL query with parameterized queries
+            # Construct and execute SQL query to update flight status
+            # The query converts and combines Date and DepartingTime to match with DepartingDateTime
             sql = """
-                    UPDATE flights SET Status = %s WHERE FlightNumber = %s AND DepartingDateTime = %s
+                UPDATE flights 
+                SET Status = %s 
+                WHERE FlightNumber = %s 
+                AND Date = %s AND DepartingTime = TIME(%s)
             """
-            cursor.execute(sql, tuple(value_dict.values()))
+            print(value_dict["DepartingTime"])
+            cursor.execute(
+                sql,
+                (
+                    value_dict["Status"],
+                    value_dict["FlightNumber"],
+                    value_dict["Date"],
+                    value_dict["DepartingTime"],
+                ),
+            )
             connection.commit()
 
-            # Assuming you want to fetch the recently added flight data
-            # Query to fetch the flight details using primary key or unique identifier is preferred
-            # For demonstration, using the same values
+            # Construct and execute SQL query to fetch updated flight details
+            sql = """
+                SELECT * FROM flights 
+                WHERE FlightNumber = %s 
+                AND Date = %s AND DepartingTime = TIME(%s)
+            """
             cursor.execute(
-                "SELECT * FROM flights WHERE FlightNumber = %s AND DepartingDateTime = %s",
-                (value_dict["FlightNumber"], value_dict["DepartingDateTime"]),
+                sql,
+                (
+                    value_dict["FlightNumber"],
+                    value_dict["Date"],
+                    value_dict["DepartingTime"],
+                ),
             )
             flights = cursor.fetchall()
-            # Fetch all results
+
             return jsonify(flights)
     finally:
         connection.close()

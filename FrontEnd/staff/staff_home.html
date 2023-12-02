@@ -79,11 +79,12 @@
                 <h3>Change Flight Status</h3>
                 <!-- Form to change flight status -->
                 <form id="UpdateStatusForm">
-                    <input type="text" id="FlightNumber1" placeholder="Flight Number">
-                    <input type="text" id="DepartingDateTime1" placeholder="DepartingDateTime">
+                    <input type="text" id="FlightNumberStatus" placeholder="Flight Number">
+                    <input type="date" id="DateStatus" placeholder="Date">
+                    <input type="text" id="DepartingTimeStatus" placeholder="Departing Time">
 
                     <!-- Dropdown for status -->
-                    <select id="Status1">
+                    <select id="StatusUpdateStatus">
                         <option value="" selected disabled>Choose a status...</option>
                         <option value="Upcoming">Upcoming</option>
                         <option value="Delayed">Delayed</option>
@@ -100,11 +101,11 @@
             <div id="addAirplanePanel" class="content-panel">
                 <h3>Add Airplane</h3>
                 <!-- Form to add a new airplane -->
-                <form id="createAirplaneForm">
+                <form id="addAirplaneForm">
                     <!-- AirplaneID,SeatingCapacity,Airline -->
                     <input type="text" id="AirplaneID" placeholder="ID for the airplane">
                     <input type="text" id="SeatingCapacity" placeholder="The capacity of the flight">
-                    <input type="text" id="cAirline" placeholder="The airline for airplane">
+                    <input type="text" id="AirplaneAirline" placeholder="The airline for airplane">
                     <button type="submit">Add Airplane</button>
                 </form>
                 <div id="addAirplaneResult">
@@ -116,7 +117,7 @@
             <div id="addAirportPanel" class="content-panel">
                 <h3>Add New Airport</h3>
                 <!-- Form to add a new airport -->
-                <form id="createAirportForm">
+                <form id="addAirportForm">
                     <input type="text" id="AirportName" placeholder="Name for the airport">
                     <input type="text" id="AirportCity" placeholder="The city of the airport">
                     <input type="text" id="IATA" placeholder="IATA code for airport">
