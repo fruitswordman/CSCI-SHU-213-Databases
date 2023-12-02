@@ -44,7 +44,7 @@ function createFlightElement(flight, showPurchaseButton = false) {
                 <div class="flight-price">￥${flight.Price.slice(0, -3)}</div>
                 <div class="flight-status">${flight.Status}</div>
             </div>
-            ${showPurchaseButton ? `<button class="purchase-button" data-flightid="${flight.FlightID}">Purchase</button>` : ''}
+            ${showPurchaseButton ? `<button class="purchase-button" data-flightid="${flight.FlightNumber}">Purchase</button>` : ''}
         </div>
     `;
 }
@@ -83,22 +83,21 @@ searchFlightsForm.addEventListener('submit', function (event) {
 
     const FlightNumber = document.getElementById("searchFlightNumber").value;
     const Price = document.getElementById("searchPrice").value;
-    const Status = document.getElementById("searchStatus").value;
     const DepartureAirport = document.getElementById("searchDepartureAirport").value;
     const ArrivalAirport = document.getElementById("searchArrivalAirport").value;
     const Airline = document.getElementById("searchAirline").value;
     const Airplane = document.getElementById("searchAirplane").value;
     const Date = document.getElementById("searchDate").value;
 
-    queryAndPurchaseFlights(FlightNumber, Price, Status, DepartureAirport, ArrivalAirport, Airline, Airplane, Date);
+    queryAndPurchaseFlights(FlightNumber, Price, DepartureAirport, ArrivalAirport, Airline, Airplane, Date);
 });
 
-async function queryAndPurchaseFlights(FlightNumber, Price, Status, DepartureAirport, ArrivalAirport, Airline, Airplane, Date) {
+async function queryAndPurchaseFlights(FlightNumber, Price, DepartureAirport, ArrivalAirport, Airline, Airplane, Date) {
     const flightsContainer = document.getElementById('searchFlightsResult');
     flightsContainer.innerHTML = '';
 
     const url = new URL('http://127.0.0.1:5000/api/flights/search');
-    const params = { FlightNumber, Price, Status, DepartureAirport, ArrivalAirport, Airline, Airplane, Date };
+    const params = { FlightNumber, Price, DepartureAirport, ArrivalAirport, Airline, Airplane, Date };
     url.search = new URLSearchParams(params).toString();
 
     try {
@@ -122,16 +121,19 @@ document.getElementById('searchFlightsResult').addEventListener('click', async f
         const FlightNumber = event.target.getAttribute('data-flightid');
         const Date = event.target.parentElement.querySelector('.flight-date').textContent;
         const DepartingTime = event.target.parentElement.querySelector('.flight-departing-time').textContent;
+        const CustomerEmail = document.getElementById("buyForCustomerEmail").value;
+
 
         const data = {
             FlightNumber,
             Date,
             DepartingTime,
+            CustomerEmail
         };
 
         console.log(data);
         try {
-            const response = await fetch('http://127.0.0.1:5000/api/flights/purchase', {
+            const response = await fetch('http://127.0.0.1:5000/api/flights/booking_agent_purchase', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
