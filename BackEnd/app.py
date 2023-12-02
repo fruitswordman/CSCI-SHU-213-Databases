@@ -10,6 +10,7 @@ app.json_encoder = CustomJSONEncoder
 CORS(app)
 session = {}
 
+
 @app.route("/api/logout", methods=["GET"])
 def logoutPost():
     try:
@@ -29,27 +30,32 @@ def my_flight():
             # Execute SQL query
             if account_type == "airline_staff":
                 airline = session["Airline"]
-
                 sql = f"SELECT * FROM flights WHERE Airline = '{airline}' ORDER BY departingdatetime DESC;"
+
             elif account_type == "customer":
                 sql = f"""
                 SELECT * 
                 FROM tickets Natural Join flights Natural Join purchase
                 WHERE purchase.CustomerEmail = '{session["username"]}'
                 """
-            # elif account_type == "customer":
-            #     sql =
+
+            elif account_type == "booking_agent":
+                sql = f"""
+                SELECT f.* 
+                FROM flights f 
+                Join booking_agents_work_for bawf ON f.airline = bawf.airline 
+                WHERE bawf.email = '{session['username']}' 
+                ORDER BY f.departingdatetime DESC;
+                """
+
+            else:
+                return jsonify("Not authoritized!")
 
             cursor.execute(sql)
-
-            # Fetch all results
             flights = cursor.fetchall()
 
-            # Return the results as JSON
             return jsonify(flights)
-            # return flights
     finally:
-        # Close the connection
         connection.close()
 
 
@@ -389,7 +395,9 @@ def process_flight_purchase(FlightNumber, Date, DepartingTime):
     try:
         with connection.cursor() as cursor:
             sql = """CALL purchaseTicket_NoAgent(%s, Date(%s), Time(%s), %s);"""
-            cursor.execute(sql, (FlightNumber, Date, DepartingTime, session["username"]))
+            cursor.execute(
+                sql, (FlightNumber, Date, DepartingTime, session["username"])
+            )
             connection.commit()
             return True
     except Exception as e:
