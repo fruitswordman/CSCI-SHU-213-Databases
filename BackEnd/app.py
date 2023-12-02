@@ -9,7 +9,7 @@ app.secret_key = "your_very_secret_key_here"
 app.json_encoder = CustomJSONEncoder
 CORS(app)
 session = {}
-
+#####################################################
 
 @app.route("/api/logout", methods=["GET"])
 def logoutPost():
