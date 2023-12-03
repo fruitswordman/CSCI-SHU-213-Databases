@@ -160,7 +160,7 @@ def agents_search_flights():
 
     # If no conditions were added, remove the WHERE clause
     if conditions:
-        sql += "AND" + " AND ".join(conditions)
+        sql += "AND " + " AND ".join(conditions)
 
     sql += " ORDER BY departingdatetime DESC LIMIT 500;"
 
@@ -419,10 +419,10 @@ def purchase_flight():
     DepartingTime = data.get("DepartingTime")
 
     success = process_flight_purchase(FlightNumber, Date, DepartingTime)
-    if success:
+    if success == True:
         return jsonify({"success": True, "message": "Flight purchased successfully!"})
     else:
-        return jsonify({"success": False, "message": "Failed to purchase flight."}), 400
+        return jsonify({"success": False, "message": f"{success}"})
 
 
 def process_flight_purchase(FlightNumber, Date, DepartingTime):
@@ -436,8 +436,7 @@ def process_flight_purchase(FlightNumber, Date, DepartingTime):
             connection.commit()
             return True
     except Exception as e:
-        print(e)
-        return False
+        return e
 
 
 @app.route("/api/flights/booking_agent_purchase", methods=["POST"])
@@ -453,10 +452,10 @@ def booking_agent_purchase_flight():
     success = process_flight_bookingagent_purchase(
         FlightNumber, Date, DepartingTime, CustomerEmail
     )
-    if success:
+    if success == True:
         return jsonify({"success": True, "message": "Flight purchased successfully!"})
     else:
-        return jsonify({"success": False, "message": "Failed to purchase flight."}), 400
+        return jsonify({"success": False, "message": f"{success}"})
 
 
 def process_flight_bookingagent_purchase(
@@ -473,8 +472,7 @@ def process_flight_bookingagent_purchase(
             connection.commit()
             return True
     except Exception as e:
-        print(e)
-        return False
+        return e
 
 
 @app.route("/api/register_customer", methods=["GET"])

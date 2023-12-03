@@ -11,6 +11,9 @@
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
 
+    <!-- D3 JavaScript -->
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+
     <!-- Leaflet JavaScript -->
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 
@@ -33,9 +36,6 @@
             <button type="submit">Search Flights</button>
         </form>
 
-        <!-- Container for displaying flight results -->
-        <div id="flightsList" class="results-container"></div>
-
         <!-- Flight Status Form -->
         <form id="flightStatusForm">
             <input type="text" id="flightNumber" placeholder="Flight Number">
@@ -45,6 +45,10 @@
 
         <!-- Container for displaying flight status results -->
         <div id="statusList" class="results-container"></div>
+
+        <!-- Container for displaying flight results -->
+        <div id="flightsList" class="results-container"></div>
+
     </div>
 
 

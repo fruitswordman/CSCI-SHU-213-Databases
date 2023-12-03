@@ -266,6 +266,65 @@
     }
 }
 
+
+/*  */
+/*  */
+/* create new airports */
+/*  */
+/*  */
+
+
+/* Styles for the Airports list */
+#addAirportResult {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+}
+
+/* Styles for individual airport containers */
+.Airport {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.Airport:hover {
+    background-color: #f1f1f1;
+}
+
+/* Styling for different pieces of airport information */
+.AirportName, .AirportCity, .IATA {
+    padding: 5px;
+    margin: 2px 0;
+    font-size: 1em;
+    color: #333;
+}
+
+/* Highlighting Airport Name */
+.AirportName {
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+/* Subtle style for City and IATA code */
+.AirportCity, .IATA {
+    color: #666;
+    font-size: 0.9em;
+}
+
+@media (max-width: 768px) {
+    .Airport {
+        align-items: center;
+    }
+}
+
+
 /*  */
 /*  */
 /* update status */

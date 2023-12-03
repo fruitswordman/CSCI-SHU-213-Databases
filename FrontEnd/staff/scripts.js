@@ -208,9 +208,6 @@ AddAirportForm.addEventListener('submit', function (event) {
         AirportCity,
         IATA
     );
-
-    // console.log(`Searching flights from ${departingAirport} to ${arrivingAirport} on ${date}`);
-
 });
 
 function AddDisplayAirport(AirportName,
@@ -260,10 +257,6 @@ function AddDisplayAirport(AirportName,
                 IATA.textContent = `${airport.IATA}`;
                 AirportDiv.appendChild(IATA);
 
-                // Append containers to the main flight div
-                // AirportDiv.appendChild(infoContainer);
-
-                // Append the complete flight info to the container
                 AirportContainer.appendChild(AirportDiv);
             });
         })
