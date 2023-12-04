@@ -723,6 +723,56 @@ def add_agent():
         connection.close()
 
 
+@app.route("/api/commision", methods=["GET"])
+def commision():
+    connection = get_db_connection()
+    type = request.args.get("commision_type", type=str)
+
+    try:
+        with connection.cursor() as cursor:
+            # Construct and execute SQL query with parameterized queries
+            if type == "Total Tickets Booked":
+                sql = f"""
+                    
+	SELECT COUNT(t.TicketID) AS result
+	FROM purchase AS p
+	NATURAL JOIN tickets AS t
+	NATURAL JOIN flights AS f
+	WHERE p.PurchaseDate >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH) and p.BookingAgentEmail = '{session["username"]}'
+
+
+                """
+            elif type == "Average Commission per Order":
+                sql = f"""
+    SELECT 0.1*AVG(f.Price) AS result
+	FROM purchase AS p
+	NATURAL JOIN tickets AS t
+	NATURAL JOIN flights AS f
+	WHERE p.PurchaseDate >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH) and p.BookingAgentEmail = '{session["username"]}'
+                
+                
+                """
+            elif type == "Total Commission":
+                sql = f"""
+	SELECT 0.1*SUM(f.Price) AS result
+	FROM purchase AS p
+	NATURAL JOIN tickets AS t
+	NATURAL JOIN flights AS f
+	WHERE p.PurchaseDate >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH) and p.BookingAgentEmail = '{session["username"]}'
+                """
+            else:
+                return jsonify("Failed")
+            cursor.execute(sql)
+            connection.commit()
+
+            commission = cursor.fetchall()
+
+            # Fetch all results
+            return jsonify(commission)
+    finally:
+        connection.close()
+
+
 # fetch all flights info with their departing and arriving lat and long
 @app.route("/api/flights/all_geo", methods=["GET"])
 def get_all_flights_geo():

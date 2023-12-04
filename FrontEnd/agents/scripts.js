@@ -149,6 +149,39 @@ document.getElementById('searchFlightsResult').addEventListener('click', async f
     }
 });
 
+// commission
+document.getElementById('commissionForm').addEventListener('submit', function (event) {
+    event.preventDefault();
+    var commissionType = document.getElementById('commissionType').value;
+    commission(commissionType)
+
+});
+
+function commission(commissionType) {
+    const commission_div = document.getElementById("commissionInfo")
+    commission_div.innerHTML = '';
+    // Construct the URL with query parameters
+    const url = new URL('http://127.0.0.1:5000/api/commision');
+    const params = { commision_type: commissionType };
+    url.search = new URLSearchParams(params).toString();
+    fetch(url)  // Make sure the port matches the Flask server
+        .then(response => response.json())
+        .then(commission => {
+            if (commission == "Failed") {
+                alert("failed to show commsion")
+                return
+            }
+
+            commission_div.textContent = commissionType + "-> " + commission[0]["result"]
+        })
+        .catch(error => {
+            console.error('Error fetching Commision:', error);
+            flightsContainer.textContent = 'Failed to load Commision.';
+        });
+}
+
+
+// top 5 customer
 
 const TopCustomerplotForm = document.getElementById('TopCustomerplotForm');
 TopCustomerplotForm.addEventListener('submit', function (event) {

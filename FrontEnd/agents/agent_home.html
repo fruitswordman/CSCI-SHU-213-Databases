@@ -53,12 +53,25 @@
         <div id="viewCommissionPanel" class="content-panel">
             <h3>View Commission</h3>
             <!-- Form to change flight status -->
+            <form id="commissionForm">
+                <div class="form-group">
+                    <label for="Commission">Choice</label>
+                    <select id="commissionType" class="form-control" required>
+                        <option value="Total Tickets Booked">Total Tickets Booked</option>
+                        <option value="Average Commission per Order">Average Commission per Order</option>
+                        <option value="Total Commission">Total Commission</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Proceed</button>
+            </form>
+
+            <div id="commissionInfo"></div>
         </div>
-        
+
         <div id="viewTopCustomersPanel" class="content-panel">
             <h3>View Top Customers</h3>
             <!-- Form to change flight status -->
-            
+
             <form id="TopCustomerplotForm">
                 <div class="form-group">
                     <label for="Top 5 C">Render plot for Top 5 frequent customers</label>
