@@ -651,58 +651,6 @@ def grant_permission():
         connection.close()
 
 
-@app.route("/api/Commision", methods=["GET"])
-def Commision():
-    connection = get_db_connection()
-    Type = request.args.get("Commision_type", type=str)
-    print("***********"*10)
-    try:
-        with connection.cursor() as cursor:
-            # Construct and execute SQL query with parameterized queries
-            if Type == "total_ticket":
-                sql = f"""
-                    
-	SELECT COUNT(t.TicketID) AS result
-	FROM purchase AS p
-	NATURAL JOIN tickets AS t
-	NATURAL JOIN flights AS f
-	WHERE p.PurchaseDate >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH) and p.BookingAgentEmail = '{session["username"]}'
-
-
-                """
-            elif Type == "Average_Commision":
-                sql = f"""
-    SELECT 0.1*AVG(f.Price) AS result
-	FROM purchase AS p
-	NATURAL JOIN tickets AS t
-	NATURAL JOIN flights AS f
-	WHERE p.PurchaseDate >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH) and p.BookingAgentEmail = '{session["username"]}'
-                
-                
-                """
-            elif Type =="Total_Commision":
-                sql =f"""
-	SELECT 0.1*SUM(f.Price) AS result
-	FROM purchase AS p
-	NATURAL JOIN tickets AS t
-	NATURAL JOIN flights AS f
-	WHERE p.PurchaseDate >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH) and p.BookingAgentEmail = '{session["username"]}'
-                """
-            else:
-                return jsonify("Failed")
-            cursor.execute(sql)
-            connection.commit()
-
-            Commision = cursor.fetchall()
-            
-            # Fetch all results
-            return jsonify(Commision)
-    finally:
-        connection.close()
-
-
-
-
 if __name__ == "__main__":
     app.run(debug=True)
     # print(get_upcoming_flights())
