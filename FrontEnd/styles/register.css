@@ -1,62 +1,44 @@
 body {
+    background-color: #f4f4f4;
     font-family: Arial, sans-serif;
-    background-color: #f8f8f8;
-    color: #333;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 50vh; /* 100% of the viewport height */
-    margin: 0;
 }
 
-/* put container vertically in the middle */
 .container {
-    background-color: #fff;
-    /* White background for the form container */
-    border-radius: 8px;
-    /* Rounded corners for the container */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    /* Slight shadow for depth */
-    max-width: 400px;
-    /* Maximum width of the form */
-    margin: 50px auto;
-    /* Center the form on the page with some margin at the top */
+    width: 400px;
+    margin: 100px auto;
     padding: 20px;
-    /* Padding inside the container */
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 h2 {
-    font-weight: bold;
-    color: #333;
-    /* Dark grey color for the heading */
     text-align: center;
-    /* Center the heading */
     margin-bottom: 20px;
-    /* Spacing below the heading */
+    color: #333;
 }
 
-.form-group label {
-    font-weight: bold;
-    /* Make labels bold */
+.form-group {
+    text-align: left;
+    margin-bottom: 15px;
 }
 
-.btn-primary {
-    background-color: #007bff;
-    /* Primary button color */
-    border-color: #007bff;
-    /* Border color for the primary button */
-    width: 100%;
-    /* Full width for the button */
+.form-control {
     padding: 10px;
-    /* Padding for the button */
-    font-size: 16px;
-    /* Slightly larger font size for the button */
-    font-weight: bold;
+    border: 1px solid #ddd;
+    border-radius: 4px;
 }
 
-.btn-primary:hover {
-    background-color: #0069d9;
-    /* Darken the button on hover */
-    border-color: #0062cc;
-    /* Darken the border on hover */
+.btn {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    background: #28a745;
+    color: white;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background: #218838;
 }

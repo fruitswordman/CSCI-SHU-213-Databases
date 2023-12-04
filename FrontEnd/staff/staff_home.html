@@ -43,7 +43,7 @@
                 <li data-panelid="revenueComparisonPanel">Comparison of Revenue</li>
                 <li data-panelid="topDestinationsPanel">View Top Destinations</li>
                 <li data-panelid="grantPermissionsPanel">Grant Permissions</li>
-                <li data-panelid="addAgentPanel">Add Booking Agents</li>
+                <li data-panelid="addAgentsPanel">Add Booking Agents</li>
                 <li onclick="logoutAndPost()">Logout</li>
             </ul>
         </div>
@@ -104,13 +104,14 @@
                 <!-- Form to add a new airplane -->
                 <form id="addAirplaneForm">
                     <!-- AirplaneID,SeatingCapacity,Airline -->
-                    <input type="text" id="AirplaneID" placeholder="Airplane ID">
+                    <input type="text" id="AirplaneID" placeholder="ID for the airplane">
                     <input type="text" id="SeatingCapacity" placeholder="The capacity of the flight">
-                    <input type="text" id="AirplaneAirline" placeholder="Airline">
+                    <input type="text" id="AirplaneAirline" placeholder="The airline for airplane">
                     <button type="submit">Add Airplane</button>
                 </form>
                 <div id="addAirplaneResult">
                 </div>
+
             </div>
 
 
@@ -129,16 +130,11 @@
             </div>
 
 
+
             <div id="viewAgentsPanel" class="content-panel">
                 <h3>Booking Agents</h3>
-                <!-- Container for booking agents information -->
-                <div id="agentsList">
-                    <!-- Dynamic content will be loaded here -->
-                </div>
+                <!-- Information about booking agents -->
             </div>
-
-
-
             <div id="viewCustomersPanel" class="content-panel">
                 <h3>Frequent Customers</h3>
 
@@ -153,30 +149,13 @@
                 <div id="TopCustomerplot">
 
                 </div>
-            </div>
 
+
+            </div>
             <div id="viewReportsPanel" class="content-panel">
-                <h3>Flight Reports</h3>
-                <!-- Dropdown to select report type -->
-                <form id="reportSelectionForm">
-                    <label for="reportType">Select Report Type:</label>
-                    <select id="reportType">
-                        <option value="" selected disabled>Select report...</option>
-                        <option value="monthly">Monthly Report</option>
-                        <option value="annual">Annual Report</option>
-                        <!-- Add other report options as needed -->
-                    </select>
-                    <button type="submit">Generate Report</button>
-                </form>
-
-                <!-- Container for report results -->
-                <div id="reportsResult" class="reports-result">
-                    <!-- Placeholder for dynamic content -->
-                    <p>Select a report type and click "Generate Report" to display the flight data.</p>
-                </div>
+                <h3>Reports</h3>
+                <!-- Sales reports and analytics -->
             </div>
-
-
             <div id="revenueComparisonPanel" class="content-panel">
                 <h3>Revenue Comparison</h3>
                 <!-- Revenue comparison charts -->
@@ -202,15 +181,9 @@
 
                 </div>
             </div>
-
-
-            <div id="addAgentPanel" class="content-panel">
-                <h3>Add Booking Agent</h3>
-                <!-- Form to add a new booking agent -->
-                <form id="addAgentForm">
-                    <input type="text" id="AgentEmail" placeholder="Agent Email">
-                    <button type="submit">Add Agent</button>
-                </form>
+            <div id="addAgentsPanel" class="content-panel">
+                <h3>Add Booking Agents</h3>
+                <!-- Form to add booking agents -->
             </div>
 
 

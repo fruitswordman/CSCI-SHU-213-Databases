@@ -145,7 +145,7 @@ h1 {
 .flight-number {
     font-size: 1.4em;
     font-weight: bold;
-    color: #333333;
+    color: #333333; 
 }
 
 .flight-departing-airport,
@@ -173,10 +173,3 @@ h1 {
     }
 }
 
-#flightSearchForm {
-    margin-top: 10px;
-}
-
-#flightStatusForm {
-    margin-top: 10px;
-}

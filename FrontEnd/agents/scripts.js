@@ -96,7 +96,7 @@ async function queryAndPurchaseFlights(FlightNumber, Price, DepartureAirport, Ar
     const flightsContainer = document.getElementById('searchFlightsResult');
     flightsContainer.innerHTML = '';
 
-    const url = new URL('http://127.0.0.1:5000/api/flights/agents_search');
+    const url = new URL('http://127.0.0.1:5000/api/flights/search');
     const params = { FlightNumber, Price, DepartureAirport, ArrivalAirport, Airline, Airplane, Date };
     url.search = new URLSearchParams(params).toString();
 

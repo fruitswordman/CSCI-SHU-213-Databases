@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles/reg.css">
+</head>
+
+<body>
+    <div class="container">
+        <h2>Register</h2>
+        <form id="registrationForm">
+            <div class="form-group">
+                <label for="userType">Register as:</label>
+                <select id="userType" class="form-control" required>
+                    <option value="Customer">Customer</option>
+                    <option value="Agent">Agent</option>
+                    <option value="Staff">Staff</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Proceed</button>
+        </form>
+    </div>
+    <script>
+        document.getElementById('registrationForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            var userType = document.getElementById('userType').value;
+            // window.location.href = userType.toLowerCase() + '_reg.html'; // Redirect to specific registration form
+            
+            if (userType == "Customer"){
+                window.location.href = 'Customer_register.html';
+            }else if (userType == "Agent"){
+                window.location.href = 'BookingAgent_register.html';
+            }else if (userType == "Staff") {
+                window.location.href = 'AirlineStaff_register.html';
+            }else{
+                console.log("Wrong register type!")
+                console.log(userType)
+            }
+            
+            
+        });
+    </script>
+</body>
+
+</html>

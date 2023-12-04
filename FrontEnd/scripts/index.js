@@ -2,6 +2,7 @@ function queryAndDisplayFlights(departingCity, arrivingCity, date) {
     const flightsContainer = document.getElementById('flightsList');
     flightsContainer.innerHTML = '';
 
+    // Construct the URL with query parameters
     const url = new URL('http://127.0.0.1:5000/api/flights/search');
     const params = { departingCity, arrivingCity, date };
     url.search = new URLSearchParams(params).toString();
@@ -112,11 +113,12 @@ function checkAndDisplayStatus(flightNumber, statusDate) {
     const statusContainer = document.getElementById('statusList');
     statusContainer.innerHTML = '';
 
+    // Construct the URL with query parameters
     const url = new URL('http://127.0.0.1:5000/api/flights/status');
     const params = { flightNumber, statusDate };
     url.search = new URLSearchParams(params).toString();
 
-    fetch(url)
+    fetch(url)  // Make sure the port matches the server where your API is hosted
         .then(response => response.json())
         .then(status => {
             status.forEach(status => {
@@ -178,6 +180,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const arrivingAirport = document.getElementById('arrivingAirport').value;
         const date = document.getElementById('date').value;
 
+        // Implement your search logic here
         queryAndDisplayFlights(departingAirport, arrivingAirport, date);
 
         console.log(`Searching flights from ${departingAirport} to ${arrivingAirport} on ${date}`);
@@ -191,68 +194,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const flightNumber = document.getElementById('flightNumber').value;
         const statusDate = document.getElementById('statusDate').value;
 
+        // Implement your status check logic here
         checkAndDisplayStatus(flightNumber, statusDate);
         console.log(`Checking status for flight ${flightNumber} on ${statusDate}`);
-    });
-});
-
-
-document.addEventListener('DOMContentLoaded', async function () {
-    var mymap = L.map('mapid').setView([27.86166, 104.195397], 5);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
-        maxZoom: 18,
-    }).addTo(mymap);
-
-    var svgLayer = L.svg().addTo(mymap);
-
-    async function fetchFlightGeoData() {
-        try {
-            const response = await fetch('http://127.0.0.1:5000/api/flights/all_geo');
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            return await response.json();
-        } catch (error) {
-            console.error('Fetch error:', error);
-            return null;
-        }
-    }
-
-    function updateFlightPaths(flights) {
-        var svgElement = d3.select("#mapid svg"),
-            g = svgElement.select("g");
-
-        // Clear previous paths
-        g.selectAll("path").remove();
-
-        // Add new paths
-        flights.forEach(flight => {
-            var startPoint = mymap.latLngToLayerPoint(new L.LatLng(flight.DepartureLattitude, flight.DepartureLongitude));
-            var endPoint = mymap.latLngToLayerPoint(new L.LatLng(flight.ArrivalLattitude, flight.ArrivalLongitude));
-
-            var newPath = d3.path();
-            newPath.moveTo(startPoint.x, startPoint.y);
-            newPath.lineTo(endPoint.x, endPoint.y);
-
-            g.append("path")
-                .attr("d", newPath.toString())
-                .attr("stroke", "darkblue")
-                .attr("stroke-opacity", 0.1)
-                .attr("stroke-width", 0.1);
-        });
-    }
-
-    // Fetch data and update map
-    const flightData = await fetchFlightGeoData();
-    if (flightData && flightData.success) {
-        updateFlightPaths(flightData.data);
-    }
-
-    // Update paths when map moves
-    mymap.on("moveend", function () {
-        if (flightData && flightData.success) {
-            updateFlightPaths(flightData.data);
-        }
     });
 });
