@@ -242,10 +242,40 @@ function Customer_ploting() {
 }
 
 
+document.getElementById('CommissionForm').addEventListener('submit', function (event) {
+    event.preventDefault();
+    var Commision_type = document.getElementById('Commision_type').value;
+    // window.location.href = userType.toLowerCase() + '_reg.html'; // Redirect to specific registration form
+    
+   Commision(Commision_type)
+    
+    
+});
+
+function Commision(Commision_type) {
+const Commision_div = document.getElementById("Commision_info")
+    Commision_div.innerHTML = '';
+    // Construct the URL with query parameters
+    const url = new URL('http://127.0.0.1:5000/api/Commision');
+    const params = {Commision_type};
+    url.search = new URLSearchParams(params).toString();
+    fetch(url)  // Make sure the port matches the Flask server
+        .then(response => response.json())
+        .then(Commision => {
+            if (Commision == "Failed"){
+                alert("failed to show commsion")
+                return
+            }
+            
+            Commision_div.textContent = Commision_type +": " + Commision[0]["result"]
+        })
+        .catch(error => {
+            console.error('Error fetching Commision:', error);
+            flightsContainer.textContent = 'Failed to load Commision.';
+        });
 
 
-
-
+}
 
 function logoutAndPost() {
     // Define the URL to which you want to post data
