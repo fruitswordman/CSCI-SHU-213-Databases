@@ -30,32 +30,33 @@ def my_flight():
             # Execute SQL query
             if account_type == "airline_staff":
                 airline = session["Airline"]
-                sql = f"SELECT * FROM flights WHERE Airline = '{airline}' ORDER BY departingdatetime DESC;"
 
+                sql = f"SELECT * FROM flights WHERE Airline = '{airline}' ORDER BY departingdatetime DESC;"
             elif account_type == "customer":
                 sql = f"""
                 SELECT * 
                 FROM tickets Natural Join flights Natural Join purchase
                 WHERE purchase.CustomerEmail = '{session["username"]}'
                 """
-
             elif account_type == "booking_agent":
                 sql = f"""
-                SELECT f.* 
-                FROM flights f 
-                Join booking_agents_work_for bawf ON f.airline = bawf.airline 
-                WHERE bawf.email = '{session['username']}' 
-                ORDER BY f.departingdatetime DESC;
+                select f.* 
+                from flights f Join booking_agents_work_for bawf ON f.airline = bawf.airline 
+                WHERE bawf.email = '{session["username"]}' ORDER BY f.departingdatetime DESC;
                 """
-
             else:
                 return jsonify("Not authoritized!")
 
             cursor.execute(sql)
+
+            # Fetch all results
             flights = cursor.fetchall()
 
+            # Return the results as JSON
             return jsonify(flights)
+            # return flights
     finally:
+        # Close the connection
         connection.close()
 
 
@@ -101,6 +102,65 @@ def search_flights():
         sql = "SELECT * FROM flights"
     else:
         sql += " AND ".join(conditions)
+
+    sql += " ORDER BY departingdatetime DESC LIMIT 500;"
+
+    connection = get_db_connection()
+    try:
+        with connection.cursor() as cursor:
+            # Execute the query with the values of the provided parameters
+            cursor.execute(
+                sql,
+                tuple(
+                    query_params[attr] for attr in attribute_list if query_params[attr]
+                ),
+            )
+            flights = cursor.fetchall()
+            return jsonify(flights)
+    finally:
+        connection.close()
+
+
+@app.route("/api/flights/agents_search", methods=["GET"])
+def agents_search_flights():
+    # List of possible query parameters
+    attribute_list = [
+        "FlightNumber",
+        "DepartingTime",
+        "ArrivingTime",
+        "Price",
+        "Status",
+        "DepartureAirport",
+        "ArrivalAirport",
+        "Airline",
+        "Airplane",
+        "Date",
+    ]
+
+    # Retrieve query parameters
+    query_params = {attr: request.args.get(attr, type=str) for attr in attribute_list}
+
+    # Construct the base SQL query
+    sql = f"SELECT flights.* FROM flights JOIN booking_agents_work_for bawf ON flights.airline = bawf.airline WHERE bawf.email = '{session['username']}'"
+
+    # List to hold SQL conditions
+    conditions = []
+
+    # Construct conditions based on provided parameters
+    for attr, value in query_params.items():
+        if value:
+            if attr == "Date":
+                conditions.append(f"DATE({attr}) = %s")
+            elif attr in ["DepartingTime", "ArrivingTime"]:
+                conditions.append(f"TIME({attr}) = %s")
+            elif attr == "Price":
+                conditions.append(f"CAST({attr} AS DECIMAL(10, 2)) = %s")
+            else:
+                conditions.append(f"{attr} = %s")
+
+    # If no conditions were added, remove the WHERE clause
+    if conditions:
+        sql += "AND " + " AND ".join(conditions)
 
     sql += " ORDER BY departingdatetime DESC LIMIT 500;"
 
@@ -203,55 +263,30 @@ def login():
 @app.route("/api/create_flights", methods=["GET"])
 def create_flight():
     # Retrieve query parameters
-    value_dict = {}
-    attribute_list = [
-        "FlightNumber",
-        "DepartingTime",
-        "ArrivingTime",
-        "Price",
-        "Status",
-        "DepartureAirport",
-        "ArrivalAirport",
-        "Airline",
-        "Airplane",
-        "Date",
-    ]
-    for attribute in attribute_list:
-        value_dict[attribute] = request.args.get(attribute, type=str)
-
-    # Data type conversions
-    value_dict["Price"] = decimal.Decimal(value_dict["Price"])
-    value_dict["Date"] = datetime.strptime(value_dict["Date"], "%Y-%m-%d").date()
-    value_dict["DepartingTime"] = datetime.strptime(
-        value_dict["DepartingTime"], "%H:%M:%S"
-    ).time()
-    value_dict["ArrivingTime"] = datetime.strptime(
-        value_dict["ArrivingTime"], "%H:%M:%S"
-    ).time()
+    flight_data = {
+        "FlightNumber": request.args.get("FlightNumber", type=str),
+        "DepartingTime": request.args.get("DepartingTime", type=str),
+        "ArrivingTime": request.args.get("ArrivingTime", type=str),
+        "Price": request.args.get("Price", type=str),
+        "Status": request.args.get("Status", type=str),
+        "DepartureAirport": request.args.get("DepartureAirport", type=str),
+        "ArrivalAirport": request.args.get("ArrivalAirport", type=str),
+        "Airline": request.args.get("Airline", type=str),
+        "Airplane": request.args.get("Airplane", type=str),
+        "Date": request.args.get("Date", type=str),
+        "StaffUsername": session["username"],
+    }
 
     connection = get_db_connection()
     try:
         with connection.cursor() as cursor:
-            # Construct and execute SQL query with parameterized queries
-            sql = """
-                INSERT INTO flights (FlightNumber, DepartingTime, ArrivingTime, Price, Status, DepartureAirport, ArrivalAirport, Airline, Airplane, Date)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-            """
-            cursor.execute(sql, tuple(value_dict.values()))
-
-            connection.commit()
-
-            cursor.execute(
-                "SELECT * FROM flights WHERE FlightNumber = %s AND Date = %s AND DepartingTime = %s",
-                (
-                    value_dict["FlightNumber"],
-                    value_dict["Date"],
-                    value_dict["DepartingTime"],
-                ),
-            )
+            # Call the stored procedure
+            cursor.callproc("CreateAndFetchFlight", tuple(flight_data.values()))
             flights = cursor.fetchall()
-            # Fetch all results
             return jsonify(flights)
+    except Exception as e:
+        print(e)
+        return jsonify(f"Failed to create flight. {e}")
     finally:
         connection.close()
 
@@ -384,10 +419,10 @@ def purchase_flight():
     DepartingTime = data.get("DepartingTime")
 
     success = process_flight_purchase(FlightNumber, Date, DepartingTime)
-    if success:
+    if success == True:
         return jsonify({"success": True, "message": "Flight purchased successfully!"})
     else:
-        return jsonify({"success": False, "message": "Failed to purchase flight."}), 400
+        return jsonify({"success": False, "message": f"{success}"})
 
 
 def process_flight_purchase(FlightNumber, Date, DepartingTime):
@@ -401,8 +436,8 @@ def process_flight_purchase(FlightNumber, Date, DepartingTime):
             connection.commit()
             return True
     except Exception as e:
-        print(e)
-        return False
+        return e
+
 
 @app.route("/api/flights/booking_agent_purchase", methods=["POST"])
 def booking_agent_purchase_flight():
@@ -414,24 +449,30 @@ def booking_agent_purchase_flight():
     DepartingTime = data.get("DepartingTime")
     CustomerEmail = data.get("CustomerEmail")
 
-    success = process_flight_bookingagent_purchase(FlightNumber, Date, DepartingTime, CustomerEmail)
-    if success:
+    success = process_flight_bookingagent_purchase(
+        FlightNumber, Date, DepartingTime, CustomerEmail
+    )
+    if success == True:
         return jsonify({"success": True, "message": "Flight purchased successfully!"})
     else:
-        return jsonify({"success": False, "message": "Failed to purchase flight."}), 400
+        return jsonify({"success": False, "message": f"{success}"})
 
 
-def process_flight_bookingagent_purchase(FlightNumber, Date, DepartingTime,CustomerEmail):
+def process_flight_bookingagent_purchase(
+    FlightNumber, Date, DepartingTime, CustomerEmail
+):
     connection = get_db_connection()
     try:
         with connection.cursor() as cursor:
             sql = """CALL purchaseTicket(%s, Date(%s), Time(%s), %s, %s);"""
-            cursor.execute(sql, (FlightNumber, Date, DepartingTime,CustomerEmail, session['username']))
+            cursor.execute(
+                sql,
+                (FlightNumber, Date, DepartingTime, CustomerEmail, session["username"]),
+            )
             connection.commit()
             return True
     except Exception as e:
-        print(e)
-        return False
+        return e
 
 
 @app.route("/api/register_customer", methods=["GET"])
@@ -572,7 +613,6 @@ def Top5_customer():
         connection.close()
 
 
-
 @app.route("/api/Top5_customer_bookingAgent", methods=["GET"])
 def Top5_customer_bookingAgent():
     connection = get_db_connection()
@@ -602,11 +642,6 @@ def Top5_customer_bookingAgent():
         connection.close()
 
 
-
-
-
-
-
 @app.route("/api/grant_permission", methods=["GET"])
 def grant_permission():
     value_dict = {}
@@ -630,10 +665,7 @@ def grant_permission():
             cursor.execute(sql)
             same_company = cursor.fetchall()
             if same_company:
-                grant = """
-                    INSERT INTO `permissions` 
-                    VALUES (%s,%s);
-                """
+                grant = "CALL UpdateUserPermission(%s,%s);"
                 cursor.execute(grant, tuple(value_dict.values()))
                 connection.commit()
                 check = """
@@ -650,6 +682,59 @@ def grant_permission():
     finally:
         connection.close()
 
+@app.route("/api/show_agents", methods=["GET"])
+def show_agents():
+    connection = get_db_connection()
+
+    try:
+        with connection.cursor() as cursor:
+            sql = f"""
+            select b.name Name, b.email Email, bawf.airline Airline
+            from booking_agents b
+            natural join booking_agents_work_for bawf
+            where airline = '{session['Airline']}'
+            """
+            cursor.execute(sql)
+            agents = cursor.fetchall()
+            print(agents)
+            return jsonify(agents)
+    except Exception as e:
+        print(e)
+        return jsonify("Failed to show agents.")
+    finally:
+        connection.close()
+
+
+@app.route("/api/add_agent", methods=["GET"])
+def add_agent():
+    connection = get_db_connection()
+
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                f'INSERT INTO booking_agents_work_for (Airline, Email) VALUES ("{session["Airline"]}", "{request.args.get("agentEmail", type=str)}")'
+            )
+            connection.commit()
+            return jsonify({"success": True, "message": "Agent added successfully."})
+    except:
+        return jsonify({"success": False, "message": "Failed to add agent."})
+    finally:
+        connection.close()
+
+
+# fetch all flights info with their departing and arriving lat and long
+@app.route("/api/flights/all_geo", methods=["GET"])
+def get_all_flights_geo():
+    connection = get_db_connection()
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("CALL fetchFlightGeo();")
+            data = cursor.fetchall()
+            return jsonify({"success": True, "data": data})
+    except:
+        return jsonify({"success": False, "message": "Failed to fetch flights info."})
+    finally:
+        connection.close()
 
 @app.route("/api/Commision", methods=["GET"])
 def Commision():
@@ -699,9 +784,6 @@ def Commision():
             return jsonify(Commision)
     finally:
         connection.close()
-
-
-
 
 if __name__ == "__main__":
     app.run(debug=True)
